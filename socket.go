@@ -25,7 +25,7 @@ func send(c chan<- string, data, prefix string) {
 	}
 }
 
-func main() {
+func socket() {
 	unBChan := make(chan string)
 	bChan := make(chan string, 10)
 	defer close(bChan)
