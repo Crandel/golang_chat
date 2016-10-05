@@ -1,0 +1,13 @@
+.DS_Store
+*.db
+*.log
+log/
+custom/
+data/
+.vendor/*
+.idea/
+*.iml
+*.exe
+*.exe~
+*.pem
+vendor/*
