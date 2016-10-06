@@ -1,10 +1,10 @@
 package main
 
 import (
+	"html/template"
 	"log"
 	"net/http"
 	"os"
-	"time"
 
 	router "github.com/julienschmidt/httprouter"
 )
@@ -16,27 +16,28 @@ var (
 	Error = log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
 )
 
-type timeHandler struct {
-	format string
-}
-
 func check(e error, str string) {
 	if e != nil {
 		Error.Panic(e.Error(), str)
 	}
 }
 
+// Message is struct for template
+type Message struct {
+	Messages []string
+}
+
 func main() {
 	Debug.Print("Start Server on 8080 port logger")
 	r := router.New()
-	r.GET("/time", func(w http.ResponseWriter, r *http.Request, p router.Params) {
-		th := timeHandler{format: time.RFC1123}
-		tm := time.Now().Format(th.format)
-		Debug.Println(tm)
+	r.GET("/main", func(w http.ResponseWriter, r *http.Request, p router.Params) {
+		messages := Message{[]string{"first", "sec", "third", "fourth", "Fifth"}}
+		Debug.Println(messages)
 		Socket()
-		_, err := w.Write([]byte("The Datetime is: " + tm))
-		check(err, "Write timeHandler")
+		base := template.Must(template.ParseFiles("./templates/base.gotmpl", "./templates/main.gotmpl"))
+		base.Execute(w, messages)
 	})
+	r.ServeFiles("/static/*filepath", http.Dir("./public"))
 	err := http.ListenAndServe(":8080", r)
 	check(err, "Server")
 }
