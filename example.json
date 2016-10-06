@@ -1,5 +1,5 @@
 {
     "Version": "0.0.1",
-    "Database": "postgresql://user:pass@host:port/db"
+    "Database": "host=postgres user=gouser dbname=godb sslmode=disable password=pass"
 }
 
