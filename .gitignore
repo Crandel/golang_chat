@@ -2,12 +2,20 @@
 *.db
 *.log
 log/
+
 custom/
+
 data/
-.vendor/*
 .idea/
+.#*
 *.iml
 *.exe
 *.exe~
 *.pem
+
+# vendor folders
+.vendor/*
 vendor/*
+
+# config
+config.json
