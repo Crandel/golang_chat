@@ -17,7 +17,9 @@ type User struct {
 
 // Message from database
 type Message struct {
-	gorm.Model
-	Message string
-	Time    time.Time
+	ID        uint
+	UserID    uint
+	User      User
+	CreatedAt time.Time
+	Message   string
 }
