@@ -32,6 +32,7 @@ type config struct {
 var Config config
 
 func main() {
+	// Create new httprouter for ListenAndServe http loop
 	r := router.New()
 	configFile, err := ioutil.ReadFile("config.json")
 	if err != nil {
