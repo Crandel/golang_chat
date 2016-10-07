@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"html/template"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -21,43 +21,34 @@ var (
 )
 
 // Config struct
-type Config struct {
+type config struct {
 	Database string `json:"Database"`
 	Version  string `json:"Version"`
+	Host     string `json:"Host"`
+	Port     string `json:"Port"`
 }
 
-// C object of Config
-var C Config
+// Config object of config
+var Config config
 
 func main() {
-	Debug.Print("Start Server on 8080 port logger")
 	r := router.New()
 	configFile, err := ioutil.ReadFile("config.json")
 	if err != nil {
 		Error.Println("opening config file", err.Error())
 	}
-	err = json.Unmarshal(configFile, &C)
+	err = json.Unmarshal(configFile, &Config)
 	if err != nil {
 		Error.Println("parsing json", err.Error())
 	}
-	Debug.Println(C)
-	db, err := gorm.Open("postgres", C.Database)
+	Debug.Printf("Start Server version %s on %s:%s logger", Config.Version, Config.Host, Config.Port)
+	db, err := gorm.Open("postgres", Config.Database)
 	defer db.Close()
 	// Automigration of tables
 	db.AutoMigrate(&User{}, &Message{})
 
-	r.GET("/main", func(w http.ResponseWriter, r *http.Request, p router.Params) {
-		// firstUser := User{1, "example@mail.com", "first login", "pass1"}
-		// secondUser := User{2, "2example@mail.com", "second login", "pass2"}
-		// firstMessage := Message{firstUser, "first Message from first user", time.Now()}
-		// secondMessage := Message{secondUser, "first Message from second user", time.Now()}
-		// messages := []Message{firstMessage, secondMessage}
-		// Debug.Println(messages)
-		messages := []Message{}
-		Socket()
-		base := template.Must(template.ParseFiles("./templates/base.gotmpl", "./templates/main.gotmpl"))
-		base.Execute(w, messages)
-	})
+	r.GET("/", PageMainHandler)
 	r.ServeFiles("/static/*filepath", http.Dir("./public"))
-	log.Fatal(http.ListenAndServe(":8080", r))
+	server := fmt.Sprintf("%s:%s", Config.Host, Config.Port)
+	log.Fatal(http.ListenAndServe(server, r))
 }
