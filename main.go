@@ -25,7 +25,7 @@ var (
 	Db *gorm.DB
 )
 
-// Config struct
+// config struct
 type config struct {
 	Database database  `json:"Database"`
 	Version  string    `json:"Version"`
@@ -75,7 +75,7 @@ func init() {
 		index := strings.Index(fullName, ext)
 		// name without extension
 		name := fullName[:index]
-		templates[name] = fullName
+		templates[name] = fmt.Sprintf("./%s/%s", Config.Template.Folder, fullName)
 	}
 	Config.Template.TemplateMap = templates
 }

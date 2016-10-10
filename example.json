@@ -8,7 +8,7 @@
     "Port": "8000",
     "Template": {
         "Root": "base",
-        "Ext": "gotmpl",
+        "Ext": "gtpl",
         "Folder": "templates"
     }
 }

@@ -15,13 +15,13 @@ var (
 func PageMainHandler(w http.ResponseWriter, r *http.Request, _ router.Params) {
 	Db.Preload("User").Find(&messages)
 	Socket()
-	main := template.Must(template.ParseFiles("./templates/base.gotmpl", "./templates/main.gotmpl"))
+	main := template.Must(template.ParseFiles(Config.Template.Root, Config.Template.TemplateMap["main"]))
 	main.Execute(w, messages)
 }
 
 // GetLoginHandler - render template for login page
 func GetLoginHandler(w http.ResponseWriter, r *http.Request, _ router.Params) {
-	login := template.Must(template.ParseFiles("./templates/base.gotmpl", "./templates/login.gotmpl"))
+	login := template.Must(template.ParseFiles(Config.Template.Root, Config.Template.TemplateMap["login"]))
 	login.Execute(w, nil)
 }
 
