@@ -1,7 +1,14 @@
 {
     "Version": "0.0.1",
-    "Database": "host=postgres user=gouser dbname=godb sslmode=disable password=pass",
+    "Database": {
+        "Type": "postgres",
+        "Path": "host=postgres user=gouser dbname=godb sslmode=disable password=pass"
+    },
     "Host": "localhost",
-    "Port": "8000"
+    "Port": "8000",
+    "Template": {
+        "Root": "base",
+        "Ext": "gotmpl",
+        "Folder": "templates"
+    }
 }
-
