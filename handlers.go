@@ -36,6 +36,6 @@ func PostLoginHandler(w http.ResponseWriter, r *http.Request, _ router.Params) {
 	r.ParseForm()
 	// logic part of log in
 	Debug.Printf("%#v", r.Form)
-	Debug.Println("login:", r.Form["login"])
-	Debug.Println("password:", r.Form["password"])
+	Debug.Println("login:", r.FormValue("login"))
+	Debug.Println("password:", r.FormValue("password"))
 }
