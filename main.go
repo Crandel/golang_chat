@@ -47,24 +47,24 @@ type database struct {
 	Path string
 }
 
+// CheckErr - function for working with errors
+func CheckErr(err error, name string) {
+	if err != nil {
+		Error.Println(err.Error(), name)
+	}
+}
+
 func init() {
 	// We need to parse config json file into Config struct
 	configFile, err := ioutil.ReadFile("config.json")
-	if err != nil {
-		Error.Println("Opening config file", err.Error())
-	}
 	err = json.Unmarshal(configFile, &Config)
-	if err != nil {
-		Error.Println("Parsing json", err.Error())
-	}
+	CheckErr(err, "Parsing json")
 	// Fill template struct from our templates dir
 	templ := "%s/%s.%s"
 	templateDir := fmt.Sprintf("./%s", Config.Template.Folder)
 	// list of files from templates dir
 	files, err := ioutil.ReadDir(templateDir)
-	if err != nil {
-		Error.Println("Read template Directory", err.Error())
-	}
+	CheckErr(err, "Read template Directory")
 	// Set template Root file, all templates will Parse with it
 	Config.Template.Root = fmt.Sprintf(templ, Config.Template.Folder, Config.Template.Root, Config.Template.Ext)
 	// Create map with template names

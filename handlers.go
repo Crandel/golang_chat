@@ -11,17 +11,23 @@ var (
 	messages []Message
 )
 
+func getTemlates(name string) (*template.Template, error) {
+	return template.ParseFiles(Config.Template.Root, Config.Template.TemplateMap[name])
+}
+
 // PageMainHandler handler for main page
 func PageMainHandler(w http.ResponseWriter, r *http.Request, _ router.Params) {
 	Db.Preload("User").Find(&messages)
 	Socket()
-	main := template.Must(template.ParseFiles(Config.Template.Root, Config.Template.TemplateMap["main"]))
+	templates, err := getTemlates("main")
+	main := template.Must(templates, err)
 	main.Execute(w, messages)
 }
 
 // GetLoginHandler - render template for login page
 func GetLoginHandler(w http.ResponseWriter, r *http.Request, _ router.Params) {
-	login := template.Must(template.ParseFiles(Config.Template.Root, Config.Template.TemplateMap["login"]))
+	templates, err := getTemlates("login")
+	login := template.Must(templates, err)
 	login.Execute(w, nil)
 }
 
