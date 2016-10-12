@@ -3,6 +3,12 @@
 	"ignore": "test",
 	"package": [
 		{
+			"checksumSHA1": "BdLdZP/C2uOO3lqk9X3NCKFpXa4=",
+			"path": "github.com/asaskevich/govalidator",
+			"revision": "7b3beb6df3c42abd3509abfc3bcacc0fbfb7c877",
+			"revisionTime": "2016-10-01T16:31:30Z"
+		},
+		{
 			"checksumSHA1": "g/V4qrXjUGG9B+e3hB+4NAYJ5Gs=",
 			"path": "github.com/gorilla/context",
 			"revision": "08b5f424b9271eedf6f9f0ce86cb9396ed337a42",

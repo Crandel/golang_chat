@@ -9,6 +9,7 @@ import (
 	"os"
 	"strings"
 
+	valid "github.com/asaskevich/govalidator"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	router "github.com/julienschmidt/httprouter"
@@ -54,6 +55,16 @@ func CheckErr(err error, name string) {
 	}
 }
 
+// Create new httprouter for ListenAndServe http loop
+func routeInit() *router.Router {
+	r := router.New()
+	r.GET("/", PageMainHandler)
+	r.GET("/login", GetLoginHandler)
+	r.POST("/login", PostLoginHandler)
+	r.ServeFiles("/static/*filepath", http.Dir("./public"))
+	return r
+}
+
 func init() {
 	// We need to parse config json file into Config struct
 	configFile, err := ioutil.ReadFile("config.json")
@@ -78,9 +89,11 @@ func init() {
 		templates[name] = fmt.Sprintf("./%s/%s", Config.Template.Folder, fullName)
 	}
 	Config.Template.TemplateMap = templates
+	valid.SetFieldsRequiredByDefault(true)
 }
 
 func main() {
+	// Database part
 	Db, _ = gorm.Open(Config.Database.Type, Config.Database.Path)
 	defer Db.Close()
 	Db.LogMode(true)
@@ -89,21 +102,8 @@ func main() {
 	message := &Message{}
 	Db.AutoMigrate(user, message)
 
-	// Create new httprouter for ListenAndServe http loop
-	r := router.New()
-	Debug.Printf("Start Server version %s on %s:%s", Config.Version, Config.Host, Config.Port)
-	// user1 := User{
-	// 	Email:    "cradlemann@gmail.com",
-	// 	Login:    "crandel",
-	// 	Password: "pass",
-	// 	Messages: []Message{{Message: "First message"}, {Message: "second mess"}},
-	// }
-	// Debug.Println(user1)
-	// Db.Set("gorm:save_associations", true).Create(&user1)
-	r.GET("/", PageMainHandler)
-	r.GET("/login", GetLoginHandler)
-	r.POST("/login", PostLoginHandler)
-	r.ServeFiles("/static/*filepath", http.Dir("./public"))
+	r := routeInit()
 	server := fmt.Sprintf("%s:%s", Config.Host, Config.Port)
+	Debug.Printf("Start Server version %s on %s", Config.Version, server)
 	Error.Println(http.ListenAndServe(server, r))
 }
