@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"net/http"
 
+	valid "github.com/asaskevich/govalidator"
 	router "github.com/julienschmidt/httprouter"
 )
 
@@ -34,8 +35,14 @@ func GetLoginHandler(w http.ResponseWriter, r *http.Request, _ router.Params) {
 // PostLoginHandler - parce form, validate and save user
 func PostLoginHandler(w http.ResponseWriter, r *http.Request, _ router.Params) {
 	r.ParseForm()
-	// logic part of log in
 	Debug.Printf("%#v", r.Form)
-	Debug.Println("login:", r.FormValue("login"))
-	Debug.Println("password:", r.FormValue("password"))
+	// logic part of log in
+	user := &User{
+		Login:    r.FormValue("login"),
+		Password: r.FormValue("password"),
+	}
+	result, err := valid.ValidateStruct(user)
+	if err == nil || !result {
+		Db.Create(user)
+	}
 }

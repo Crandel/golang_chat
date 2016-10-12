@@ -9,7 +9,6 @@ import (
 	"os"
 	"strings"
 
-	valid "github.com/asaskevich/govalidator"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	router "github.com/julienschmidt/httprouter"
@@ -89,7 +88,6 @@ func init() {
 		templates[name] = fmt.Sprintf("./%s/%s", Config.Template.Folder, fullName)
 	}
 	Config.Template.TemplateMap = templates
-	valid.SetFieldsRequiredByDefault(true)
 }
 
 func main() {

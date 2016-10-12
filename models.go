@@ -10,8 +10,8 @@ import (
 type User struct {
 	gorm.Model
 	Email    string `gorm:"size:50"`
-	Login    string `gorm:"size:50"`
-	Password string `gorm:"size:255"`
+	Login    string `gorm:"size:50" valid:"required"`
+	Password string `gorm:"size:255" valid:"required"`
 	Messages []Message
 }
 
