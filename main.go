@@ -58,8 +58,13 @@ func CheckErr(err error, name string) {
 func routeInit() *router.Router {
 	r := router.New()
 	r.GET("/", PageMainHandler)
+
 	r.GET("/login", GetLoginHandler)
 	r.POST("/login", PostLoginHandler)
+
+	r.GET("/sign", GetSignHandler)
+	r.POST("/sign", PostSignHandler)
+
 	r.ServeFiles("/static/*filepath", http.Dir("./public"))
 	return r
 }

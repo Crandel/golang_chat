@@ -19,7 +19,7 @@
     </div>
     <p>
         <input class="btn btn-primary" id="submit" title="Send" type="button" value="Send">
-        <input class="btn btn-default" id="signin" title="Sign In" type="button" value="Sign In">
+        <input class="btn btn-default" id="sign" title="Sign In" type="button" value="Sign In">
     </p>
 </form>
 {{end}}

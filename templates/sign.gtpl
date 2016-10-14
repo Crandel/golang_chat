@@ -29,5 +29,5 @@
 </form>
 {{end}}
 {{define "footer"}}
-<script src="{{ app.router.static.url(filename='js/signin.js') }}"></script>
+<script src="/static/js/sign.js"></script>
 {{end}}

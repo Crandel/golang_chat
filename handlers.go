@@ -43,6 +43,29 @@ func PostLoginHandler(w http.ResponseWriter, r *http.Request, _ router.Params) {
 	}
 	result, err := valid.ValidateStruct(user)
 	if err == nil || !result {
+		//auth logic
+	}
+}
+
+// GetSignHandler - render template for sign page
+func GetSignHandler(w http.ResponseWriter, r *http.Request, _ router.Params) {
+	templates, err := getTemlates("sign")
+	sign := template.Must(templates, err)
+	sign.Execute(w, nil)
+}
+
+// PostSignHandler - parce form, validate and save user
+func PostSignHandler(w http.ResponseWriter, r *http.Request, _ router.Params) {
+	r.ParseForm()
+	Debug.Printf("%#v", r.Form)
+	// logic part of sign in
+	user := &User{
+		Login:    r.FormValue("login"),
+		Email:    r.FormValue("email"),
+		Password: r.FormValue("password"),
+	}
+	result, err := valid.ValidateStruct(user)
+	if err == nil || !result {
 		Db.Create(user)
 	}
 }
