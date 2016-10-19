@@ -12,6 +12,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	router "github.com/julienschmidt/httprouter"
+	"github.com/justinas/alice"
 )
 
 var (
@@ -57,13 +58,19 @@ func CheckErr(err error, name string) {
 // Create new httprouter for ListenAndServe http loop
 func routeInit() *router.Router {
 	r := router.New()
-	r.GET("/", PageMainHandler)
+	baseMidList := []func(http.Handler) http.Handler{LogMiddleware}
+	authMidList := []func(http.Handler) http.Handler{}
+	copy(authMidList, baseMidList)
+	append(authMidList, DisallowAnonMiddleware)
+	baseAlice := alice.New(baseMidList...)
+	authAlice := alice.New(authMidList...)
+	r.GET("/", authAlice.Then(PageMainHandler))
 
-	r.GET("/login", GetLoginHandler)
-	r.POST("/login", PostLoginHandler)
+	r.GET("/login", baseAlice.Then(GetLoginHandler))
+	r.POST("/login", baseAlice.Then(PostLoginHandler))
 
-	r.GET("/sign", GetSignHandler)
-	r.POST("/sign", PostSignHandler)
+	r.GET("/sign", baseAlice.Then(GetSignHandler))
+	r.POST("/sign", baseAlice.Then(PostSignHandler))
 
 	r.ServeFiles("/static/*filepath", http.Dir("./public"))
 	return r

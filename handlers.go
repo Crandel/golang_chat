@@ -44,6 +44,7 @@ func PostLoginHandler(w http.ResponseWriter, r *http.Request, _ router.Params) {
 	result, err := valid.ValidateStruct(user)
 	if err == nil || !result {
 		//auth logic
+		Debug.Printf("%#v\n%#v", result, user)
 	}
 }
 
