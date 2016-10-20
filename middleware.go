@@ -2,10 +2,15 @@ package main
 
 import "net/http"
 
+// MakeHandler - handler wrapper
+func MakeHandler(h func(http.ResponseWriter, *http.Request)) http.Handler {
+	return http.HandlerFunc(h)
+}
+
 // LogMiddleware - logging handler
 func LogMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		Debug.Println(r.RemoteAddr, r.Method, r.URL)
+		Debug.Println(r.Method, r.URL)
 		next.ServeHTTP(w, r)
 	})
 }

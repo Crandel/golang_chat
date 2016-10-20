@@ -15,6 +15,12 @@
 			"revisionTime": "2016-08-17T18:46:32Z"
 		},
 		{
+			"checksumSHA1": "urMd7A9QPAJYY0GZJL9qBhlUmD8=",
+			"path": "github.com/gorilla/mux",
+			"revision": "757bef944d0f21880861c2dd9c871ca543023cba",
+			"revisionTime": "2016-09-20T23:08:13Z"
+		},
+		{
 			"checksumSHA1": "veX5bpYOBjZZWMyWxXxys8EH9d8=",
 			"path": "github.com/gorilla/securecookie",
 			"revision": "fa5329f913702981df43dcb2a380bac429c810b5",
@@ -43,12 +49,6 @@
 			"path": "github.com/jinzhu/inflection",
 			"revision": "74387dc39a75e970e7a3ae6a3386b5bd2e5c5cff",
 			"revisionTime": "2016-08-17T01:46:01Z"
-		},
-		{
-			"checksumSHA1": "Drsz3oT4NmM2tVQCRk+occxVvPA=",
-			"path": "github.com/julienschmidt/httprouter",
-			"revision": "d8ff598a019f2c7bad0980917a588193cf26666e",
-			"revisionTime": "2016-08-10T19:53:38Z"
 		},
 		{
 			"checksumSHA1": "OBvAHqWjdI4NQVAqTkcQAdTuCFY=",

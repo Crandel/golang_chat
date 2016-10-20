@@ -8,10 +8,11 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
+	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
-	router "github.com/julienschmidt/httprouter"
 	"github.com/justinas/alice"
 )
 
@@ -56,23 +57,22 @@ func CheckErr(err error, name string) {
 }
 
 // Create new httprouter for ListenAndServe http loop
-func routeInit() *router.Router {
-	r := router.New()
-	baseMidList := []func(http.Handler) http.Handler{LogMiddleware}
-	authMidList := []func(http.Handler) http.Handler{}
+func routeInit() *mux.Router {
+	r := mux.NewRouter()
+	// Create base list of middlewares
+	baseMidList := []alice.Constructor{LogMiddleware}
+	// Create auth list of middlewares, extended from base
+	authMidList := []alice.Constructor{}
 	copy(authMidList, baseMidList)
-	append(authMidList, DisallowAnonMiddleware)
+	// append from base list
+	authMidList = append(authMidList, DisallowAnonMiddleware)
 	baseAlice := alice.New(baseMidList...)
 	authAlice := alice.New(authMidList...)
-	r.GET("/", authAlice.Then(PageMainHandler))
+	r.Handle("/", authAlice.Then(MainHandler))
+	r.Handle("/login", baseAlice.Then(LoginHandler)).Methods("GET", "POST")
+	r.Handle("/sign", baseAlice.Then(SignHandler)).Methods("GET", "POST")
 
-	r.GET("/login", baseAlice.Then(GetLoginHandler))
-	r.POST("/login", baseAlice.Then(PostLoginHandler))
-
-	r.GET("/sign", baseAlice.Then(GetSignHandler))
-	r.POST("/sign", baseAlice.Then(PostSignHandler))
-
-	r.ServeFiles("/static/*filepath", http.Dir("./public"))
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./public"))))
 	return r
 }
 
@@ -114,6 +114,13 @@ func main() {
 
 	r := routeInit()
 	server := fmt.Sprintf("%s:%s", Config.Host, Config.Port)
+	srv := &http.Server{
+		Handler: r,
+		Addr:    server,
+		// Good practice: enforce timeouts for servers you create!
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+	}
 	Debug.Printf("Start Server version %s on %s", Config.Version, server)
-	Error.Println(http.ListenAndServe(server, r))
+	Error.Println(srv.ListenAndServe())
 }
