@@ -19,3 +19,4 @@ vendor/*
 
 # config
 config.json
+go_chat

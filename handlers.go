@@ -4,6 +4,9 @@ import (
 	"html/template"
 	"net/http"
 
+	"github.com/gorilla/mux"
+	"github.com/gorilla/sessions"
+
 	valid "github.com/asaskevich/govalidator"
 )
 
@@ -13,6 +16,27 @@ var (
 
 func getTemlates(name string) (*template.Template, error) {
 	return template.ParseFiles(Config.Template.Root, Config.Template.TemplateMap[name])
+}
+
+// Redirect - redirect to named router
+func Redirect(w http.ResponseWriter, r *http.Request, name string) {
+	url, err := mux.CurrentRoute(r).Subrouter().Get(name).URL()
+	if err != nil {
+		Error.Println(err)
+	}
+	Debug.Printf("%#v\n", url)
+
+	http.Redirect(w, r, url.String(), 302)
+}
+
+// GetSession - return Session pointer
+func GetSession(r *http.Request) *sessions.Session {
+	sess, err := Session.Get(r, "auth")
+	if err != nil {
+		Error.Println(err)
+		return nil
+	}
+	return sess
 }
 
 // pageMainHandleFunc handler for main page
@@ -30,8 +54,7 @@ var MainHandler = MakeHandler(pageMainHandleFunc)
 // loginHandleFunc - render template for login page
 func loginHandleFunc(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
-		templates, err := getTemlates("login")
-		login := template.Must(templates, err)
+		login := template.Must(getTemlates("login"))
 		login.Execute(w, nil)
 	} else {
 		r.ParseForm()
@@ -43,8 +66,17 @@ func loginHandleFunc(w http.ResponseWriter, r *http.Request) {
 		}
 		result, err := valid.ValidateStruct(user)
 		if err == nil || !result {
-			//auth logic
-			Debug.Printf("%#v\n%#v", result, user)
+			Debug.Printf("%#v\n before query\n", user)
+			Db.Where(&User{Login: user.Login, Password: user.Password}).First(&user)
+			Debug.Printf("%#v\n after query\n", user)
+			if user.ID != 0 {
+				sess := GetSession(r)
+				sess.Values["id"] = user.ID
+				sess.Save(r, w)
+				Redirect(w, r, "home")
+			} else {
+				Redirect(w, r, "login")
+			}
 		}
 	}
 }
@@ -69,7 +101,13 @@ func signHandleFunc(w http.ResponseWriter, r *http.Request) {
 		}
 		result, err := valid.ValidateStruct(user)
 		if err == nil || !result {
+			sess := GetSession(r)
+			Debug.Printf("%#v\n", user)
 			Db.Create(user)
+			sess.Values["id"] = user.ID
+			sess.Save(r, w)
+			Debug.Printf("%#v\n", user)
+			Redirect(w, r, "home")
 		}
 	}
 }

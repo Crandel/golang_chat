@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/gorilla/sessions"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/justinas/alice"
@@ -25,6 +26,8 @@ var (
 	Config config
 	// Db - database object
 	Db *gorm.DB
+	// Session object
+	Session *sessions.CookieStore
 )
 
 // config struct
@@ -34,6 +37,7 @@ type config struct {
 	Host     string    `json:"Host"`
 	Port     string    `json:"Port"`
 	Template templates `json:"Template"`
+	Session  session   `json:"Session"`
 }
 
 // Struct for templates
@@ -47,6 +51,11 @@ type templates struct {
 type database struct {
 	Type string
 	Path string
+}
+
+type session struct {
+	SecretKey     string
+	EncryptionKey string
 }
 
 // CheckErr - function for working with errors
@@ -68,9 +77,9 @@ func routeInit() *mux.Router {
 	authMidList = append(authMidList, DisallowAnonMiddleware)
 	baseAlice := alice.New(baseMidList...)
 	authAlice := alice.New(authMidList...)
-	r.Handle("/", authAlice.Then(MainHandler))
-	r.Handle("/login", baseAlice.Then(LoginHandler)).Methods("GET", "POST")
-	r.Handle("/sign", baseAlice.Then(SignHandler)).Methods("GET", "POST")
+	r.Handle("/", authAlice.Then(MainHandler)).Name("home")
+	r.Handle("/login", baseAlice.Then(LoginHandler)).Methods("GET", "POST").Name("login")
+	r.Handle("/sign", baseAlice.Then(SignHandler)).Methods("GET", "POST").Name("sign")
 
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./public"))))
 	return r
@@ -100,6 +109,7 @@ func init() {
 		templates[name] = fmt.Sprintf("./%s/%s", Config.Template.Folder, fullName)
 	}
 	Config.Template.TemplateMap = templates
+	Session = sessions.NewCookieStore([]byte(Config.Session.SecretKey), []byte(Config.Session.EncryptionKey))
 }
 
 func main() {

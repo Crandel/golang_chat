@@ -10,5 +10,9 @@
         "Root": "base",
         "Ext": "gtpl",
         "Folder": "templates"
+    },
+    "Session": {
+        "SecretKey": "SecretKey",
+        "EncryptionKey": "EncryptionKey"
     }
 }

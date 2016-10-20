@@ -19,13 +19,12 @@ func LogMiddleware(next http.Handler) http.Handler {
 func DisallowAnonMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Get session
-		//sess := session.Instance(r)
-
+		sess := GetSession(r)
 		// If user is not authenticated, don't allow them to access the page
-		/*if sess.Values["id"] == nil {
-			http.Redirect(w, r, "/", http.StatusFound)
+		if sess.Values["id"] == nil {
+			Redirect(w, r, "login")
 			return
-		}*/
+		}
 		Debug.Println("DisallowAnonMiddleware before")
 		next.ServeHTTP(w, r)
 		Debug.Println(w)
