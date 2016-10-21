@@ -24,14 +24,12 @@ func Redirect(w http.ResponseWriter, r *http.Request, name string) {
 	if err != nil {
 		Error.Println(err)
 	}
-	Debug.Printf("%#v\n", url)
-
 	http.Redirect(w, r, url.String(), 302)
 }
 
 // GetSession - return Session pointer
 func GetSession(r *http.Request) *sessions.Session {
-	sess, err := Session.Get(r, "auth")
+	sess, err := Store.Get(r, "auth")
 	if err != nil {
 		Error.Println(err)
 		return nil
@@ -53,12 +51,12 @@ var MainHandler = MakeHandler(pageMainHandleFunc)
 
 // loginHandleFunc - render template for login page
 func loginHandleFunc(w http.ResponseWriter, r *http.Request) {
+
 	if r.Method == "GET" {
 		login := template.Must(getTemlates("login"))
 		login.Execute(w, nil)
 	} else {
 		r.ParseForm()
-		Debug.Printf("%#v", r.Form)
 		// logic part of log in
 		user := &User{
 			Login:    r.FormValue("login"),
@@ -66,10 +64,8 @@ func loginHandleFunc(w http.ResponseWriter, r *http.Request) {
 		}
 		result, err := valid.ValidateStruct(user)
 		if err == nil || !result {
-			Debug.Printf("%#v\n before query\n", user)
-			Db.Where(&User{Login: user.Login, Password: user.Password}).First(&user)
-			Debug.Printf("%#v\n after query\n", user)
-			if user.ID != 0 {
+			err := Db.Where(&User{Login: user.Login, Password: user.Password}).First(&user).RecordNotFound()
+			if !err {
 				sess := GetSession(r)
 				sess.Values["id"] = user.ID
 				sess.Save(r, w)
@@ -92,7 +88,6 @@ func signHandleFunc(w http.ResponseWriter, r *http.Request) {
 		sign.Execute(w, nil)
 	} else {
 		r.ParseForm()
-		Debug.Printf("%#v", r.Form)
 		// logic part of sign in
 		user := &User{
 			Login:    r.FormValue("login"),
@@ -102,11 +97,9 @@ func signHandleFunc(w http.ResponseWriter, r *http.Request) {
 		result, err := valid.ValidateStruct(user)
 		if err == nil || !result {
 			sess := GetSession(r)
-			Debug.Printf("%#v\n", user)
 			Db.Create(user)
 			sess.Values["id"] = user.ID
 			sess.Save(r, w)
-			Debug.Printf("%#v\n", user)
 			Redirect(w, r, "home")
 		}
 	}

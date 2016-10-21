@@ -4,7 +4,8 @@
         "Type": "postgres",
         "Path": "host=postgres user=gouser dbname=godb sslmode=disable password=pass"
     },
-    "Host": "localhost",
+    "Host": "127.0.0.1",
+    "Domain": "localhost",
     "Port": "8000",
     "Template": {
         "Root": "base",

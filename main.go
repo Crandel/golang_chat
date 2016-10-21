@@ -26,8 +26,8 @@ var (
 	Config config
 	// Db - database object
 	Db *gorm.DB
-	// Session object
-	Session *sessions.CookieStore
+	// Store - session store object
+	Store *sessions.CookieStore
 )
 
 // config struct
@@ -35,6 +35,7 @@ type config struct {
 	Database database  `json:"Database"`
 	Version  string    `json:"Version"`
 	Host     string    `json:"Host"`
+	Domain   string    `json:"Domain"`
 	Port     string    `json:"Port"`
 	Template templates `json:"Template"`
 	Session  session   `json:"Session"`
@@ -109,7 +110,12 @@ func init() {
 		templates[name] = fmt.Sprintf("./%s/%s", Config.Template.Folder, fullName)
 	}
 	Config.Template.TemplateMap = templates
-	Session = sessions.NewCookieStore([]byte(Config.Session.SecretKey), []byte(Config.Session.EncryptionKey))
+	Store = sessions.NewCookieStore([]byte(Config.Session.SecretKey))
+	Store.Options = &sessions.Options{
+		Domain:   Config.Domain,
+		MaxAge:   3600 * 8, // 8 hours
+		HttpOnly: true,
+	}
 }
 
 func main() {
