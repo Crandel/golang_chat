@@ -21,7 +21,7 @@ var (
 	// Debug logger
 	Debug = log.New(os.Stdout, "DEBUG: ", log.Ldate|log.Ltime|log.Lshortfile)
 	// Error logger
-	Error = log.New(os.Stdout, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
+	Error = log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
 	// Config object of config
 	Config config
 	// Db - database object
@@ -81,6 +81,7 @@ func routeInit() *mux.Router {
 	r.Handle("/", authAlice.Then(MainHandler)).Name("home")
 	r.Handle("/login", baseAlice.Then(LoginHandler)).Methods("GET", "POST").Name("login")
 	r.Handle("/sign", baseAlice.Then(SignHandler)).Methods("GET", "POST").Name("sign")
+	r.Handle("/signout", baseAlice.Then(SignOutHandler)).Methods("GET").Name("signout")
 
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./public"))))
 	return r
@@ -89,6 +90,7 @@ func routeInit() *mux.Router {
 func init() {
 	// We need to parse config json file into Config struct
 	configFile, err := ioutil.ReadFile("config.json")
+	CheckErr(err, "Couldn`t read config file `config.json`")
 	err = json.Unmarshal(configFile, &Config)
 	CheckErr(err, "Parsing json")
 	// Fill template struct from our templates dir
@@ -116,26 +118,25 @@ func init() {
 		MaxAge:   3600 * 8, // 8 hours
 		HttpOnly: true,
 	}
+	// Database part
+	Db, err = gorm.Open(Config.Database.Type, Config.Database.Path)
+	CheckErr(err, "DB open")
+
+	Db.LogMode(true)
+	// Automigration of tables
+	Db.AutoMigrate(&User{}, &Message{})
 }
 
 func main() {
-	// Database part
-	Db, _ = gorm.Open(Config.Database.Type, Config.Database.Path)
 	defer Db.Close()
-	Db.LogMode(true)
-	// Automigration of tables
-	user := &User{}
-	message := &Message{}
-	Db.AutoMigrate(user, message)
-
 	r := routeInit()
 	server := fmt.Sprintf("%s:%s", Config.Host, Config.Port)
 	srv := &http.Server{
 		Handler: r,
 		Addr:    server,
 		// Good practice: enforce timeouts for servers you create!
-		WriteTimeout: 15 * time.Second,
-		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 150 * time.Second,
+		ReadTimeout:  150 * time.Second,
 	}
 	Debug.Printf("Start Server version %s on %s", Config.Version, server)
 	Error.Println(srv.ListenAndServe())

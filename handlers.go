@@ -40,10 +40,10 @@ func GetSession(r *http.Request) *sessions.Session {
 // pageMainHandleFunc handler for main page
 func pageMainHandleFunc(w http.ResponseWriter, r *http.Request) {
 	Db.Preload("User").Find(&messages)
-	Socket()
 	templates, err := getTemlates("main")
 	main := template.Must(templates, err)
-	main.Execute(w, messages)
+	err = main.Execute(w, messages)
+	CheckErr(err, "Main page Execute")
 }
 
 // MainHandler - for main page
@@ -56,7 +56,8 @@ func loginHandleFunc(w http.ResponseWriter, r *http.Request) {
 		login := template.Must(getTemlates("login"))
 		login.Execute(w, nil)
 	} else {
-		r.ParseForm()
+		err := r.ParseForm()
+		CheckErr(err, "Parse login form")
 		// logic part of log in
 		user := &User{
 			Login:    r.FormValue("login"),
@@ -68,7 +69,8 @@ func loginHandleFunc(w http.ResponseWriter, r *http.Request) {
 			if !err {
 				sess := GetSession(r)
 				sess.Values["id"] = user.ID
-				sess.Save(r, w)
+				err := sess.Save(r, w)
+				CheckErr(err, "Session save Error")
 				Redirect(w, r, "home")
 			} else {
 				Redirect(w, r, "login")
@@ -97,9 +99,13 @@ func signHandleFunc(w http.ResponseWriter, r *http.Request) {
 		result, err := valid.ValidateStruct(user)
 		if err == nil || !result {
 			sess := GetSession(r)
+			Debug.Printf("%#v\n", user)
+			Debug.Printf("%#v\n", sess)
 			Db.Create(user)
+			Debug.Printf("%#v\n", user)
 			sess.Values["id"] = user.ID
-			sess.Save(r, w)
+			err := sess.Save(r, w)
+			CheckErr(err, "Session save Error")
 			Redirect(w, r, "home")
 		}
 	}
@@ -107,3 +113,18 @@ func signHandleFunc(w http.ResponseWriter, r *http.Request) {
 
 // SignHandler ...
 var SignHandler = MakeHandler(signHandleFunc)
+
+// signOutHandleFunc - handle func for signout page
+func signOutHandleFunc(w http.ResponseWriter, r *http.Request) {
+	sess := GetSession(r)
+	sess.Options = &sessions.Options{
+		MaxAge: -1,
+	}
+	sess.Values = nil
+	sess.Save(r, w)
+	Debug.Printf("%#v\n", sess.Values)
+	Redirect(w, r, "login")
+}
+
+// SignOutHandler ...
+var SignOutHandler = MakeHandler(signOutHandleFunc)

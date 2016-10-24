@@ -27,8 +27,8 @@ $(document).ready(function(){
     }
 
     sock.onopen = function(){
-        showMessage('Connection to server started')
-    }
+        showMessage('Connection to server started');
+    };
 
     // send message from form
     $('#submit').click(function() {
@@ -47,18 +47,18 @@ $(document).ready(function(){
     };
 
     $('#signout').click(function(){
-        window.location.href = "signout"
+        window.location.href = "signout";
     });
 
     sock.onclose = function(event){
         if(event.wasClean){
-            showMessage('Clean connection end')
+            showMessage('Clean connection end');
         }else{
-            showMessage('Connection broken')
+            showMessage('Connection broken');
         }
     };
 
     sock.onerror = function(error){
         showMessage(error);
-    }
+    };
 });
