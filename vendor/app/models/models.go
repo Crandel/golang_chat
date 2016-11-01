@@ -1,4 +1,4 @@
-package main
+package models
 
 import (
 	"time"
@@ -19,6 +19,7 @@ type User struct {
 type Message struct {
 	ID        uint
 	UserID    uint
+	User      User
 	CreatedAt time.Time
 	Message   string
 }
