@@ -22,6 +22,12 @@
     },
     "Session": {
         "SecretKey": "SecretKey",
-        "EncryptionKey": "EncryptionKey"
+        "Options": {
+            "Path": "",
+            "Domain": "localhost",
+            "MaxAge": 28800,
+            "Secure": false,
+            "HttpOnly": false
+        }
     }
 }

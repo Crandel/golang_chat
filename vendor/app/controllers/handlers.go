@@ -4,7 +4,8 @@ import (
 	m "app/models"
 	"html/template"
 	"net/http"
-	// 	"github.com/gorilla/mux"
+
+	"github.com/gorilla/mux"
 	// 	"github.com/gorilla/sessions"
 	// 	valid "github.com/asaskevich/govalidator"
 )
@@ -16,20 +17,15 @@ func MakeHandler(h func(http.ResponseWriter, *http.Request)) http.Handler {
 	return http.HandlerFunc(h)
 }
 
-// // CheckUserInSession - check if user in session
-// func CheckUserInSession(s *sessions.Session) bool {
-// 	return s.Values["id"] == nil
-// }
-
 func getTemlates(name string) (*template.Template, error) {
 	return template.ParseFiles("templates/base.gtpl", "templates/main.gtpl") //Config.Template.Root, Config.Template.TemplateMap[name])
 }
 
-// // Redirect - redirect to named router
-// func Redirect(r *http.Request, name string) (string, error) {
-// 	url, err := mux.CurrentRoute(r).Subrouter().Get(name).URL()
-// 	return url.String(), err
-// }
+// Redirect - redirect to named router
+func Redirect(r *http.Request, name string) (string, error) {
+	url, err := mux.CurrentRoute(r).Subrouter().Get(name).URL()
+	return url.String(), err
+}
 
 // pageMainHandleFunc handler for main page
 func pageMainHandleFunc(w http.ResponseWriter, r *http.Request) {

@@ -6,14 +6,13 @@ import (
 	"net/http"
 )
 
-// LogMiddleware - logging handler
+// LogMiddleware - logging middleware
 func LogMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("LogMiddleware")
 		log.Println(r.Method, r.URL)
 		next.ServeHTTP(w, r)
 	})
-
 }
 
 // DisallowAnonMiddleware - middleware to disallow anonymous users
