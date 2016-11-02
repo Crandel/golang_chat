@@ -10,8 +10,6 @@ import (
 	// 	valid "github.com/asaskevich/govalidator"
 )
 
-var messages []m.Message
-
 // MakeHandler - handler wrapper
 func MakeHandler(h func(http.ResponseWriter, *http.Request)) http.Handler {
 	return http.HandlerFunc(h)
@@ -29,7 +27,8 @@ func Redirect(r *http.Request, name string) (string, error) {
 
 // pageMainHandleFunc handler for main page
 func pageMainHandleFunc(w http.ResponseWriter, r *http.Request) {
-	// Db.Preload("User").Find(&messages)
+	messages := []m.Message{}
+	m.GetMessages(&messages)
 	templates, err := getTemlates("main")
 	main := template.Must(templates, err)
 	main.Execute(w, messages)

@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"app/models"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -9,6 +10,7 @@ import (
 
 // RouteInit - Create new httprouter for ListenAndServe http loop
 func RouteInit() *mux.Router {
+	models.Automigrate()
 	r := mux.NewRouter()
 	// Create base list of middlewares
 	baseMidList := []alice.Constructor{LogMiddleware}
