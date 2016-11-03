@@ -15,11 +15,11 @@ var config = &configuration{}
 
 // config struct
 type configuration struct {
-	Version  string             `json:"Version"`
-	Database db.Database        `json:"Database"`
-	Server   server.Server      `json:"Server"`
-	Template settings.Templates `json:"Template"`
-	Session  session.Session    `json:"Session"`
+	Version  string                `json:"Version"`
+	Database db.Database           `json:"Database"`
+	Server   server.Server         `json:"Server"`
+	Template controllers.Templates `json:"Template"`
+	Session  session.Session       `json:"Session"`
 }
 
 // ParseJSON ...
@@ -35,7 +35,7 @@ func init() {
 func main() {
 	settings.LoadConfig("config.json", config)
 	db.LoadDb(&config.Database)
-	settings.LoadTemplates(&config.Template)
+	controllers.LoadTemplates(&config.Template)
 	session.InitSession(&config.Session, config.Server.Domain)
 	r := controllers.RouteInit()
 	server.Run(r, config.Server)

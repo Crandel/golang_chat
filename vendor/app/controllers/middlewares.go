@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 )
@@ -9,7 +8,6 @@ import (
 // LogMiddleware - logging middleware
 func LogMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("LogMiddleware")
 		log.Println(r.Method, r.URL)
 		next.ServeHTTP(w, r)
 	})
@@ -18,6 +16,7 @@ func LogMiddleware(next http.Handler) http.Handler {
 // DisallowAnonMiddleware - middleware to disallow anonymous users
 func DisallowAnonMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
 		// // Get session
 		// sess, err := h.GetSession(r)
 		// if err != nil {
