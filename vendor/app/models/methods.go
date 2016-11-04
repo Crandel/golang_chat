@@ -21,3 +21,9 @@ func GetMessages(m *[]Message) {
 	dbase := db.DB
 	dbase.Preload("User").Find(m)
 }
+
+// CreateUser ...
+func CreateUser(user *User) {
+	dbase := db.DB
+	dbase.Create(user)
+}

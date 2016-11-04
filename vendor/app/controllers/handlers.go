@@ -2,12 +2,13 @@ package controllers
 
 import (
 	m "app/models"
+	s "app/utils/session"
 	"html/template"
+	"log"
 	"net/http"
 
+	valid "github.com/asaskevich/govalidator"
 	"github.com/gorilla/mux"
-	// 	"github.com/gorilla/sessions"
-	// 	valid "github.com/asaskevich/govalidator"
 )
 
 // MakeHandler - handler wrapper
@@ -39,50 +40,39 @@ var MainHandler = MakeHandler(pageMainHandleFunc)
 
 // loginHandleFunc - render template for login page
 func loginHandleFunc(w http.ResponseWriter, r *http.Request) {
-	// sess, err := GetSession(r)
-	// if err != nil {
-	// 	http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-	// 	return
-	// }
-
 	if r.Method == "GET" {
 		login := template.Must(getTemlates("login"))
 		login.Execute(w, nil)
+	} else {
+		err := r.ParseForm()
+		// logic part of log in
+		user := &m.User{
+			Login:    r.FormValue("login"),
+			Password: r.FormValue("password"),
+		}
+		result, err := valid.ValidateStruct(user)
+		if err == nil || !result {
+			err := m.GetUserByEmailPass(user)
+			if !err {
+				sess := s.Instance(r)
+				sess.Values["id"] = user.ID
+				err := sess.Save(r, w)
+				if err != nil {
+					log.Println(err)
+					return
+				}
+				url, err := Redirect(r, "home")
+				if err != nil {
+					http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+					return
+				}
+				http.Redirect(w, r, url, http.StatusMovedPermanently)
+			} else {
+				http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+				return
+			}
+		}
 	}
-	// else {
-	// 	err := r.ParseForm()
-	// 	// logic part of log in
-	// 	user := &m.User{
-	// 		Login:    r.FormValue("login"),
-	// 		Password: r.FormValue("password"),
-	// 	}
-	// 	result, err := valid.ValidateStruct(user)
-	// 	if err == nil || !result {
-	// 		err := Db.Where(&m.User{Login: user.Login, Password: user.Password}).First(&user).RecordNotFound()
-	// 		if !err {
-	// 			sess.Values["id"] = user.ID
-	// 			err := sess.Save(r, w)
-	// 			if err != nil {
-	// 				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-	// 				return
-	// 			}
-	// 			url, err := Redirect(r, "home")
-	// 			if err != nil {
-	// 				http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
-	// 				return
-	// 			}
-	// 			http.Redirect(w, r, url, http.StatusMovedPermanently)
-	// 		} else {
-	// 			url, err := Redirect(r, "login")
-	// 			if err != nil {
-	// 				http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
-	// 				return
-	// 			}
-	// 			http.Redirect(w, r, url, http.StatusMovedPermanently)
-	// 		}
-	// 	}
-	// 	return
-	// }
 }
 
 // LoginHandler ...
@@ -94,38 +84,37 @@ func signHandleFunc(w http.ResponseWriter, r *http.Request) {
 		templates, err := getTemlates("sign")
 		sign := template.Must(templates, err)
 		sign.Execute(w, nil)
+	} else {
+		r.ParseForm()
+		// logic part of sign in
+		user := &m.User{
+			Login:    r.FormValue("login"),
+			Email:    r.FormValue("email"),
+			Password: r.FormValue("password"),
+		}
+		result, err := valid.ValidateStruct(user)
+		if err == nil || !result {
+			sess := s.Instance(r)
+			if err != nil {
+				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+				return
+			}
+			m.CreateUser(user)
+			sess.Values["id"] = user.ID
+			err = sess.Save(r, w)
+			if err != nil {
+				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+				return
+			}
+			url, err := Redirect(r, "home")
+			if err != nil {
+				http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+				return
+			}
+			http.Redirect(w, r, url, http.StatusMovedPermanently)
+		}
 	}
-	// else {
-	// 	r.ParseForm()
-	// 	// logic part of sign in
-	// 	user := &m.User{
-	// 		Login:    r.FormValue("login"),
-	// 		Email:    r.FormValue("email"),
-	// 		Password: r.FormValue("password"),
-	// 	}
-	// 	result, err := valid.ValidateStruct(user)
-	// 	if err == nil || !result {
-	// 		sess, err := GetSession(r)
-	// 		if err != nil {
-	// 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-	// 			return
-	// 		}
-	// 		Db.Create(user)
-	// 		sess.Values["id"] = user.ID
-	// 		err = sess.Save(r, w)
-	// 		if err != nil {
-	// 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-	// 			return
-	// 		}
-	// 		url, err := Redirect(r, "home")
-	// 		if err != nil {
-	// 			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
-	// 			return
-	// 		}
-	// 		http.Redirect(w, r, url, http.StatusMovedPermanently)
-	// 	}
-	// }
-	// return
+	return
 }
 
 // SignHandler ...
@@ -133,26 +122,23 @@ var SignHandler = MakeHandler(signHandleFunc)
 
 // signOutHandleFunc - handle func for signout page
 func signOutHandleFunc(w http.ResponseWriter, r *http.Request) {
-	// sess, err := GetSession(r)
-	// if err != nil {
-	// 	http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-	// 	return
-	// }
-
-	// sess.Options = &sessions.Options{
-	// 	MaxAge: -1,
-	// }
-	// sess.Values = nil
-	// sess.Save(r, w)
+	sess := s.Instance(r)
+	s.Clear(sess)
 	url, err := Redirect(r, "login")
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 		return
 	}
-
 	http.Redirect(w, r, url, http.StatusMovedPermanently)
-	return
 }
 
 // SignOutHandler ...
 var SignOutHandler = MakeHandler(signOutHandleFunc)
+
+// NotFoundHandleFunc ...
+func NotFoundHandleFunc(w http.ResponseWriter, r *http.Request) {
+	log.Println("Not found handler")
+	templates, err := getTemlates("404")
+	notFound := template.Must(templates, err)
+	notFound.Execute(w, nil)
+}

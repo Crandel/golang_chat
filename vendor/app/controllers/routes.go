@@ -42,6 +42,7 @@ func RouteInit() *mux.Router {
 	r.Handle("/signout", baseAlice.Then(SignOutHandler)).Methods("GET").Name("signout")
 
 	r.PathPrefix("/static/").Handler(baseAlice.Then(http.StripPrefix("/static/", http.FileServer(http.Dir("./public")))))
+	r.NotFoundHandler = http.HandlerFunc(NotFoundHandleFunc)
 	return r
 }
 

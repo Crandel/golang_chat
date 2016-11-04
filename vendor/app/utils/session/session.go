@@ -39,6 +39,9 @@ func Instance(r *http.Request) *sessions.Session {
 
 // Clear deletes all the current session values
 func Clear(s *sessions.Session) {
+	s.Options = &sessions.Options{
+		MaxAge: -1,
+	}
 	for k := range s.Values {
 		delete(s.Values, k)
 	}
