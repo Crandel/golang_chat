@@ -41,7 +41,7 @@ func RouteInit() *mux.Router {
 	router.Handle("/login", baseAlice.Then(LoginHandler)).Methods("GET", "POST").Name("login")
 	router.Handle("/sign", baseAlice.Then(SignHandler)).Methods("GET", "POST").Name("sign")
 	router.Handle("/signout", baseAlice.Then(SignOutHandler)).Methods("GET").Name("signout")
-
+	router.Handle("/ws", authAlice.Then(WsHandler)).Name("chat")
 	router.PathPrefix("/static/").Handler(baseAlice.Then(http.StripPrefix("/static/", http.FileServer(http.Dir("./public")))))
 	router.NotFoundHandler = http.HandlerFunc(NotFoundHandleFunc)
 	return router

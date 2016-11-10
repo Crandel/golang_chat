@@ -10,10 +10,16 @@ func Automigrate() {
 }
 
 // GetUserByLoginPass ...
-func GetUserByLoginPass(login string, pass string, user *User) bool {
+func (user *User) GetUserByLoginPass(login string, pass string) bool {
 	dbase := db.DB
 	err := dbase.Where(&User{Login: login, Password: pass}).First(user).RecordNotFound()
 	return err
+}
+
+// GetUserByID ...
+func (user *User) GetUserByID(id int) {
+	dbase := db.DB
+	dbase.First(user, id)
 }
 
 // GetMessages ...
@@ -23,7 +29,7 @@ func GetMessages(m *[]Message) {
 }
 
 // CreateUser ...
-func CreateUser(user *User) {
+func (user *User) CreateUser() {
 	dbase := db.DB
 	dbase.Create(user)
 }

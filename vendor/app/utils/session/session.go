@@ -1,6 +1,7 @@
 package session
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/gorilla/sessions"
@@ -29,6 +30,16 @@ func InitSession(s *Session, domain string) {
 // CheckUserInSession - check if user in session
 func CheckUserInSession(s *sessions.Session) bool {
 	return s.Values["id"] == nil
+}
+
+// GetUserID ...
+func GetUserID(s *sessions.Session) (int, error) {
+	id, ok := s.Values["id"].(int)
+	if ok {
+		return id, nil
+	}
+
+	return 0, errors.New("Not integer value")
 }
 
 // Instance returns a new session, never returns an error

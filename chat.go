@@ -37,6 +37,7 @@ func main() {
 	db.LoadDb(&config.Database)
 	controllers.LoadTemplates(&config.Template)
 	session.InitSession(&config.Session, config.Server.Domain)
+	controllers.NewHub()
 	r := controllers.RouteInit()
 	server.Run(r, config.Server)
 }

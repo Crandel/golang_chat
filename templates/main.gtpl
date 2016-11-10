@@ -18,6 +18,6 @@ Main Chat page
     </p>
 {{end}}
 
-  efine "footer" }}
+{{define "footer" }}
     <script src="/static/js/main.js"></script>
-end}}
+{{end}}

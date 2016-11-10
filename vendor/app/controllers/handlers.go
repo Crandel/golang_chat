@@ -8,7 +8,13 @@ import (
 	"net/http"
 
 	valid "github.com/asaskevich/govalidator"
+	"github.com/gorilla/websocket"
 )
+
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+}
 
 // MakeHandler - handler wrapper
 func MakeHandler(h func(http.ResponseWriter, *http.Request)) http.Handler {
@@ -45,7 +51,7 @@ func loginHandleFunc(w http.ResponseWriter, r *http.Request) {
 		}
 		result, err := valid.ValidateStruct(user)
 		if err == nil || !result {
-			err := m.GetUserByLoginPass(user.Login, user.Password, user)
+			err := user.GetUserByLoginPass(user.Login, user.Password)
 			if !err {
 				sess := s.Instance(r)
 				sess.Values["id"] = user.ID
@@ -92,7 +98,7 @@ func signHandleFunc(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 				return
 			}
-			m.CreateUser(user)
+			user.CreateUser()
 			sess.Values["id"] = user.ID
 			err = sess.Save(r, w)
 			if err != nil {
@@ -135,3 +141,27 @@ func NotFoundHandleFunc(w http.ResponseWriter, r *http.Request) {
 	notFound := template.Must(templates, err)
 	notFound.Execute(w, nil)
 }
+
+// wsHandleFunc ...
+func wsHandleFunc(w http.ResponseWriter, r *http.Request) {
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	sess := s.Instance(r)
+	userID, err := s.GetUserID(sess)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	user := &m.User{}
+	user.GetUserByID(userID)
+	hub := GetHub()
+	client := &Client{*user, conn, make(chan []byte, 256)}
+	hub.register <- client
+	go client.write()
+	client.read()
+}
+
+var WsHandler = MakeHandler(wsHandleFunc)

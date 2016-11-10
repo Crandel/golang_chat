@@ -33,6 +33,12 @@
 			"revisionTime": "2016-09-22T14:58:04Z"
 		},
 		{
+			"checksumSHA1": "SmBqqqR0T+1Ksx5zwCl295Vey0s=",
+			"path": "github.com/gorilla/websocket",
+			"revision": "9fbf129ff2a3cf2467f7d0021de2eb4d3aecc109",
+			"revisionTime": "2016-11-02T20:04:59Z"
+		},
+		{
 			"checksumSHA1": "SOsDc39DfjrLbg8tESrvCjb8zGk=",
 			"path": "github.com/jinzhu/gorm",
 			"revision": "c1b9cf186e4bcd8e5d566ef43f2ae2dfe22dc34e",
