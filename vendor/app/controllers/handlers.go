@@ -29,7 +29,7 @@ func Redirect(r *http.Request, name string) (string, error) {
 // pageMainHandleFunc handler for main page
 func pageMainHandleFunc(w http.ResponseWriter, r *http.Request) {
 	messages := []m.Message{}
-	m.GetMessages(&messages)
+	// m.GetMessages(&messages)
 	templates, err := getTemlates("main")
 	main := template.Must(templates, err)
 	main.Execute(w, messages)
@@ -52,7 +52,7 @@ func loginHandleFunc(w http.ResponseWriter, r *http.Request) {
 		}
 		result, err := valid.ValidateStruct(user)
 		if err == nil || !result {
-			err := m.GetUserByEmailPass(user)
+			err := m.GetUserByLoginPass(user.Login, user.Password, user)
 			if !err {
 				sess := s.Instance(r)
 				sess.Values["id"] = user.ID
@@ -69,8 +69,8 @@ func loginHandleFunc(w http.ResponseWriter, r *http.Request) {
 				http.Redirect(w, r, url, http.StatusMovedPermanently)
 			} else {
 				http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-				return
 			}
+			return
 		}
 	}
 }

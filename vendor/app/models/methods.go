@@ -9,10 +9,10 @@ func Automigrate() {
 	dbase.AutoMigrate(&User{}, &Message{})
 }
 
-// GetUserByEmailPass ...
-func GetUserByEmailPass(user *User) bool {
+// GetUserByLoginPass ...
+func GetUserByLoginPass(login string, pass string, user *User) bool {
 	dbase := db.DB
-	err := dbase.Where(user).First(user).RecordNotFound()
+	err := dbase.Where(&User{Login: login, Password: pass}).First(user).RecordNotFound()
 	return err
 }
 
