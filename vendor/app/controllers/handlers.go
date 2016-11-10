@@ -8,7 +8,6 @@ import (
 	"net/http"
 
 	valid "github.com/asaskevich/govalidator"
-	"github.com/gorilla/mux"
 )
 
 // MakeHandler - handler wrapper
@@ -18,12 +17,6 @@ func MakeHandler(h func(http.ResponseWriter, *http.Request)) http.Handler {
 
 func getTemlates(name string) (*template.Template, error) {
 	return template.ParseFiles(templ.Root, templ.TemplateMap[name])
-}
-
-// Redirect - redirect to named router
-func Redirect(r *http.Request, name string) (string, error) {
-	url, err := mux.CurrentRoute(r).Subrouter().Get(name).URL()
-	return url.String(), err
 }
 
 // pageMainHandleFunc handler for main page
@@ -61,7 +54,7 @@ func loginHandleFunc(w http.ResponseWriter, r *http.Request) {
 					log.Println(err)
 					return
 				}
-				url, err := Redirect(r, "home")
+				url, err := RedirectFunc("home")
 				if err != nil {
 					http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 					return
@@ -106,7 +99,7 @@ func signHandleFunc(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 				return
 			}
-			url, err := Redirect(r, "home")
+			url, err := RedirectFunc("home")
 			if err != nil {
 				http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 				return
@@ -124,7 +117,7 @@ var SignHandler = MakeHandler(signHandleFunc)
 func signOutHandleFunc(w http.ResponseWriter, r *http.Request) {
 	sess := s.Instance(r)
 	s.Clear(sess)
-	url, err := Redirect(r, "login")
+	url, err := RedirectFunc("login")
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 		return

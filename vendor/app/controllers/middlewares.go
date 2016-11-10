@@ -25,7 +25,7 @@ func DisallowAnonMiddleware(next http.Handler) http.Handler {
 		// }
 		// // If user is not authenticated, don't allow them to access the page
 		// if h.CheckUserInSession(sess) {
-		// 	url, err := h.Redirect(r, "login")
+		// 	url, err := h.RedirectFunc("login")
 		// 	if err != nil {
 		// 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 		// 		return

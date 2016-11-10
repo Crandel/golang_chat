@@ -21,11 +21,12 @@ type Templates struct {
 }
 
 var templ *Templates
+var router *mux.Router
 
 // RouteInit - Create new httprouter for ListenAndServe http loop
 func RouteInit() *mux.Router {
 	models.Automigrate()
-	r := mux.NewRouter()
+	router = mux.NewRouter()
 	// Create base list of middlewares
 	baseMidList := []alice.Constructor{LogMiddleware}
 	// Create auth list of middlewares, extended from base
@@ -36,14 +37,14 @@ func RouteInit() *mux.Router {
 	authMidList = append(authMidList, DisallowAnonMiddleware)
 	baseAlice := alice.New(baseMidList...)
 	authAlice := alice.New(authMidList...)
-	r.Handle("/", authAlice.Then(MainHandler)).Name("home")
-	r.Handle("/login", baseAlice.Then(LoginHandler)).Methods("GET", "POST").Name("login")
-	r.Handle("/sign", baseAlice.Then(SignHandler)).Methods("GET", "POST").Name("sign")
-	r.Handle("/signout", baseAlice.Then(SignOutHandler)).Methods("GET").Name("signout")
+	router.Handle("/", authAlice.Then(MainHandler)).Name("home")
+	router.Handle("/login", baseAlice.Then(LoginHandler)).Methods("GET", "POST").Name("login")
+	router.Handle("/sign", baseAlice.Then(SignHandler)).Methods("GET", "POST").Name("sign")
+	router.Handle("/signout", baseAlice.Then(SignOutHandler)).Methods("GET").Name("signout")
 
-	r.PathPrefix("/static/").Handler(baseAlice.Then(http.StripPrefix("/static/", http.FileServer(http.Dir("./public")))))
-	r.NotFoundHandler = http.HandlerFunc(NotFoundHandleFunc)
-	return r
+	router.PathPrefix("/static/").Handler(baseAlice.Then(http.StripPrefix("/static/", http.FileServer(http.Dir("./public")))))
+	router.NotFoundHandler = http.HandlerFunc(NotFoundHandleFunc)
+	return router
 }
 
 // LoadTemplates ...
@@ -70,4 +71,10 @@ func LoadTemplates(t *Templates) {
 	}
 	t.TemplateMap = templates
 	templ = t
+}
+
+// RedirectFunc - redirect to named router
+func RedirectFunc(name string) (string, error) {
+	url, err := router.Get(name).URL()
+	return url.String(), err
 }
