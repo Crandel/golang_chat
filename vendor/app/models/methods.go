@@ -17,7 +17,7 @@ func (user *User) GetUserByLoginPass(login string, pass string) bool {
 }
 
 // GetUserByID ...
-func (user *User) GetUserByID(id int) {
+func (user *User) GetUserByID(id uint) {
 	dbase := db.DB
 	dbase.First(user, id)
 }

@@ -33,8 +33,8 @@ func CheckUserInSession(s *sessions.Session) bool {
 }
 
 // GetUserID ...
-func GetUserID(s *sessions.Session) (int, error) {
-	id, ok := s.Values["id"].(int)
+func GetUserID(s *sessions.Session) (uint, error) {
+	id, ok := s.Values["id"].(uint)
 	if ok {
 		return id, nil
 	}

@@ -164,4 +164,5 @@ func wsHandleFunc(w http.ResponseWriter, r *http.Request) {
 	client.read()
 }
 
+// WsHandler ...
 var WsHandler = MakeHandler(wsHandleFunc)
