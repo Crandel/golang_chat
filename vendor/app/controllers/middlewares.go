@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	s "app/utils/session"
 	"log"
 	"net/http"
 )
@@ -17,22 +18,18 @@ func LogMiddleware(next http.Handler) http.Handler {
 func DisallowAnonMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		// // Get session
-		// sess, err := h.GetSession(r)
-		// if err != nil {
-		// 	http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		// 	return
-		// }
-		// // If user is not authenticated, don't allow them to access the page
-		// if h.CheckUserInSession(sess) {
-		// 	url, err := h.RedirectFunc("login")
-		// 	if err != nil {
-		// 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
-		// 		return
-		// 	}
-		// 	http.Redirect(w, r, url, http.StatusMovedPermanently)
-		// 	return
-		// }
+		// Get session
+		sess := s.Instance(r)
+		// If user is not authenticated, don't allow them to access the page
+		if !s.CheckUserInSession(sess) {
+			url, err := RedirectFunc("login")
+			if err != nil {
+				http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+				return
+			}
+			http.Redirect(w, r, url, http.StatusMovedPermanently)
+			return
+		}
 		log.Println("DisallowAnonMiddleware")
 		next.ServeHTTP(w, r)
 	})

@@ -77,6 +77,7 @@ func (c *Client) write() {
 			if err != nil {
 				return
 			}
+			c.SaveMessage(string(message))
 			w.Write(message)
 
 			// Add queued chat messages to the current websocket message.

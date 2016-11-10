@@ -29,7 +29,7 @@ func InitSession(s *Session, domain string) {
 
 // CheckUserInSession - check if user in session
 func CheckUserInSession(s *sessions.Session) bool {
-	return s.Values["id"] == nil
+	return s.Values["id"] != nil
 }
 
 // GetUserID ...
