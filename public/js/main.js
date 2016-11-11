@@ -7,19 +7,27 @@ $(document).ready(function(){
     }
 
     // show message in div#subscribe
-    function showMessage(message) {
+    function showMessage(ob) {
         var messageElem = $('#subscribe'),
             height = 0,
-            date = new Date();
-            options = {hour12: false};
-        messageElem.append($('<p>').html('[' + date.toLocaleTimeString('en-US', options) + '] ' + message + '\n'));
-        messageElem.find('p').each(function(i, value){
+            date = new Date(),
+            options = {hour12: false},
+            username = $('<span/>', {'class': 'name', 'html': ' ' + ob.username + ': '}),
+            m = $('<div/>', {
+                'data-id': ob.id,
+                'data-user-id': ob.user_id,
+                'html': '[' + date.toLocaleTimeString('en-US', options) + ']' + ob.username + ob.message});
+        messageElem.append(m);
+        messageElem.find('div').each(function(i, value){
             height += parseInt($(this).height());
         });
 
         messageElem.animate({scrollTop: height});
     }
 
+    function getSystemMessage(m){
+        return {'username': 'System','id': 0, 'user_id': 0, 'message': m};
+    }
     function sendMessage(){
         var msg = $('#message');
         sock.send(msg.val());
@@ -27,7 +35,7 @@ $(document).ready(function(){
     }
 
     sock.onopen = function(){
-        showMessage('Connection to server started');
+        showMessage(getSystemMessage('Connection to server started'));
     };
 
     // send message from form
@@ -52,13 +60,13 @@ $(document).ready(function(){
 
     sock.onclose = function(event){
         if(event.wasClean){
-            showMessage('Clean connection end');
+            showMessage(getSystemMessage('Clean connection end'));
         }else{
-            showMessage('Connection broken');
+            showMessage(getSystemMessage('Connection broken'));
         }
     };
 
     sock.onerror = function(error){
-        showMessage(error);
+        showMessage(getSystemMessage(error));
     };
 });

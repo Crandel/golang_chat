@@ -8,7 +8,7 @@ Main Chat page
 {{define "content" }}
 <div id='subscribe'>
     {{range .}}
-    <p>{{.CreatedAt.Format "15:04:05"}} {{.User.Login}}: {{.Message}}</p>
+    <p>[{{.CreatedAt.Format "15:04:05"}}] {{.User.Login}}: {{.Message}}</p>
     {{end}}
 </div>
     <p>

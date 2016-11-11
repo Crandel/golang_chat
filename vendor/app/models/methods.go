@@ -1,9 +1,6 @@
 package models
 
-import (
-	"app/utils/db"
-	"log"
-)
+import "app/utils/db"
 
 // Automigrate ...
 func Automigrate() {
@@ -28,14 +25,8 @@ func (user *User) GetUserByID(id uint) {
 // SaveMessage - save single message
 func (user *User) SaveMessage(m string) {
 	dbase := db.DB
-	log.Printf("%#v\n", user)
-	message := Message{User: *user, Message: m}
-	dbase.Save(message)
-	messages := user.Messages
-	messages = append(messages, message)
-	user.Messages = messages
-	log.Printf("Message: %#v\n\n User: %#v\n", message, user)
-	dbase.Save(user)
+	message := Message{UserID: user.ID, Message: m}
+	dbase.Save(&message)
 }
 
 // GetMessages ...

@@ -28,7 +28,7 @@ func getTemlates(name string) (*template.Template, error) {
 // pageMainHandleFunc handler for main page
 func pageMainHandleFunc(w http.ResponseWriter, r *http.Request) {
 	messages := []m.Message{}
-	// m.GetMessages(&messages)
+	m.GetMessages(&messages)
 	templates, err := getTemlates("main")
 	main := template.Must(templates, err)
 	main.Execute(w, messages)
@@ -54,6 +54,7 @@ func loginHandleFunc(w http.ResponseWriter, r *http.Request) {
 			err := user.GetUserByLoginPass(user.Login, user.Password)
 			if !err {
 				sess := s.Instance(r)
+				s.Clear(sess)
 				sess.Values["id"] = user.ID
 				err := sess.Save(r, w)
 				if err != nil {
@@ -94,6 +95,7 @@ func signHandleFunc(w http.ResponseWriter, r *http.Request) {
 		result, err := valid.ValidateStruct(user)
 		if err == nil || !result {
 			sess := s.Instance(r)
+			s.Clear(sess)
 			if err != nil {
 				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 				return
