@@ -3,6 +3,7 @@ package controllers
 import (
 	m "app/models"
 	"bytes"
+	"encoding/json"
 	"log"
 	"time"
 
@@ -33,6 +34,13 @@ type Client struct {
 	m.User
 	con  *soc.Conn
 	send chan []byte
+}
+
+type sendMessage struct {
+	Message  string `json:"message"`
+	ID       uint   `json:"id"`
+	UserID   uint   `json:"user_id"`
+	Username string `json:"username"`
 }
 
 func (c *Client) read() {
@@ -72,23 +80,15 @@ func (c *Client) write() {
 				c.con.WriteMessage(soc.CloseMessage, []byte{})
 				return
 			}
-
-			w, err := c.con.NextWriter(soc.TextMessage)
+			messageID := c.SaveMessage(string(message))
+			sendJSON, err := json.Marshal(&sendMessage{Message: string(message), ID: messageID, UserID: c.ID, Username: c.Login})
+			log.Printf("%s\n\n", sendJSON)
 			if err != nil {
-				return
-			}
-			c.SaveMessage(string(message))
-			w.Write(message)
-
-			// Add queued chat messages to the current websocket message.
-			n := len(c.send)
-			for i := 0; i < n; i++ {
-				w.Write(newline)
-				w.Write(<-c.send)
-			}
-
-			if err := w.Close(); err != nil {
-				return
+				if err := c.con.WriteJSON(sendJSON); err != nil {
+					log.Println("Send json message", err)
+					return
+				}
+				log.Println(err)
 			}
 		case <-ticker.C:
 			c.con.SetWriteDeadline(time.Now().Add(writeWait))

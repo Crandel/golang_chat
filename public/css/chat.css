@@ -1,5 +1,28 @@
 #subscribe {
-    height: 500px;
-    background: AntiqueWhite;
-    overflow: auto;
+  height: 500px;
+  background: AntiqueWhite;
+  overflow: auto;
+}
+
+#subscribe > div > span {
+  font-weight: bold;
+}
+.black{
+  font-color: black;
+}
+
+.green {
+  font-color: green;
+}
+
+.yellow {
+  font-color: yellow;
+}
+
+.blue {
+  font-color: blue;
+}
+
+.red {
+  font-color: red;
 }

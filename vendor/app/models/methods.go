@@ -23,10 +23,11 @@ func (user *User) GetUserByID(id uint) {
 }
 
 // SaveMessage - save single message
-func (user *User) SaveMessage(m string) {
+func (user *User) SaveMessage(m string) uint {
 	dbase := db.DB
 	message := Message{UserID: user.ID, Message: m}
 	dbase.Save(&message)
+	return message.ID
 }
 
 // GetMessages ...

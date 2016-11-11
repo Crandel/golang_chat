@@ -5,18 +5,21 @@ $(document).ready(function(){
     catch(err){
         var sock = new WebSocket('wss://' + window.location.host + '/ws');
     }
-
+    var colors = ['green', 'red', 'yellow', 'blue'];
+    var fillCollor = Object.create(null);
     // show message in div#subscribe
     function showMessage(ob) {
         var messageElem = $('#subscribe'),
             height = 0,
             date = new Date(),
             options = {hour12: false},
-            username = $('<span/>', {'class': 'name', 'html': ' ' + ob.username + ': '}),
+            username = $('<span/>', {'class': ob.classname, 'html': ' ' + ob.username + ': '})[0].outerHTML,
             m = $('<div/>', {
-                'data-id': ob.id,
+                'id': ob.id,
                 'data-user-id': ob.user_id,
-                'html': '[' + date.toLocaleTimeString('en-US', options) + ']' + ob.username + ob.message});
+                'html': '[' + date.toLocaleTimeString('en-US', options) + ']' + username + ob.message});
+        console.log(username);
+        console.log(m);
         messageElem.append(m);
         messageElem.find('div').each(function(i, value){
             height += parseInt($(this).height());
@@ -26,7 +29,7 @@ $(document).ready(function(){
     }
 
     function getSystemMessage(m){
-        return {'username': 'System','id': 0, 'user_id': 0, 'message': m};
+        return {'username': 'System','id': 0, 'user_id': 0, 'classname':'black', 'message': m};
     }
     function sendMessage(){
         var msg = $('#message');
@@ -51,7 +54,19 @@ $(document).ready(function(){
 
     // income message handler
     sock.onmessage = function(event) {
-      showMessage(event.data);
+        console.log(event.data, 'event.data');
+        var obj = JSON.parse(event.data);
+        console.log(objA);
+        if (obj.user_id in fillCollor){
+            obj.colorname = fillCollor[obj.user_id];
+        }else{
+            var color = colors[Math.floor(Math.random() * colors.length)];
+            obj.colorname = color;
+            fillCollor[obj.user_id] = color;
+        }
+        console.log(obj);
+        console.log(fillCollor);
+        showMessage(obj);
     };
 
     $('#signout').click(function(){
