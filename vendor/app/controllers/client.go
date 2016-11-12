@@ -3,7 +3,6 @@ package controllers
 import (
 	m "app/models"
 	"bytes"
-	"encoding/json"
 	"log"
 	"time"
 
@@ -81,14 +80,11 @@ func (c *Client) write() {
 				return
 			}
 			messageID := c.SaveMessage(string(message))
-			sendJSON, err := json.Marshal(&sendMessage{Message: string(message), ID: messageID, UserID: c.ID, Username: c.Login})
-			log.Printf("%s\n\n", sendJSON)
-			if err != nil {
-				if err := c.con.WriteJSON(sendJSON); err != nil {
-					log.Println("Send json message", err)
-					return
-				}
-				log.Println(err)
+			sendJSON := sendMessage{Message: string(message), ID: messageID, UserID: c.ID, Username: c.Login}
+			log.Printf("%#v\n\n", sendJSON)
+			if err := c.con.WriteJSON(sendJSON); err != nil {
+				log.Println("Error in send json message", err)
+				return
 			}
 		case <-ticker.C:
 			c.con.SetWriteDeadline(time.Now().Add(writeWait))

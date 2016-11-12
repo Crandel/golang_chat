@@ -8,21 +8,21 @@
   font-weight: bold;
 }
 .black{
-  font-color: black;
+  color: black;
 }
 
 .green {
-  font-color: green;
+  color: green;
 }
 
 .yellow {
-  font-color: yellow;
+  color: yellow;
 }
 
 .blue {
-  font-color: blue;
+  color: blue;
 }
 
 .red {
-  font-color: red;
+  color: red;
 }

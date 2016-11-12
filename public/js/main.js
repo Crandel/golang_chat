@@ -13,7 +13,7 @@ $(document).ready(function(){
             height = 0,
             date = new Date(),
             options = {hour12: false},
-            username = $('<span/>', {'class': ob.classname, 'html': ' ' + ob.username + ': '})[0].outerHTML,
+            username = $('<span/>', {'class': ob.colorname, 'html': ' ' + ob.username + ': '})[0].outerHTML,
             m = $('<div/>', {
                 'id': ob.id,
                 'data-user-id': ob.user_id,
@@ -56,7 +56,6 @@ $(document).ready(function(){
     sock.onmessage = function(event) {
         console.log(event.data, 'event.data');
         var obj = JSON.parse(event.data);
-        console.log(objA);
         if (obj.user_id in fillCollor){
             obj.colorname = fillCollor[obj.user_id];
         }else{
@@ -64,8 +63,6 @@ $(document).ready(function(){
             obj.colorname = color;
             fillCollor[obj.user_id] = color;
         }
-        console.log(obj);
-        console.log(fillCollor);
         showMessage(obj);
     };
 

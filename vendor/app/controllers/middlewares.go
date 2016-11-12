@@ -17,7 +17,6 @@ func LogMiddleware(next http.Handler) http.Handler {
 // DisallowAnonMiddleware - middleware to disallow anonymous users
 func DisallowAnonMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
 		// Get session
 		sess := s.Instance(r)
 		// If user is not authenticated, don't allow them to access the page
