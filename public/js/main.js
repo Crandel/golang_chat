@@ -18,8 +18,6 @@ $(document).ready(function(){
                 'id': ob.id,
                 'data-user-id': ob.user_id,
                 'html': '[' + date.toLocaleTimeString('en-US', options) + ']' + username + ob.message});
-        console.log(username);
-        console.log(m);
         messageElem.append(m);
         messageElem.find('div').each(function(i, value){
             height += parseInt($(this).height());
@@ -32,8 +30,9 @@ $(document).ready(function(){
         return {'username': 'System','id': 0, 'user_id': 0, 'classname':'black', 'message': m};
     }
     function sendMessage(){
-        var msg = $('#message');
-        sock.send(msg.val());
+        var msg = $('#message'),
+            obj = {'message': msg.val(), 'user_id': msg.data('id')};
+        sock.send(JSON.stringify(obj));
         msg.val('').focus();
     }
 
@@ -54,7 +53,6 @@ $(document).ready(function(){
 
     // income message handler
     sock.onmessage = function(event) {
-        console.log(event.data, 'event.data');
         var obj = JSON.parse(event.data);
         if (obj.user_id in fillCollor){
             obj.colorname = fillCollor[obj.user_id];

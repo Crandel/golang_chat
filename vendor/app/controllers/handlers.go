@@ -11,9 +11,17 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
+var (
+	upgrader = websocket.Upgrader{
+		ReadBufferSize:  1024,
+		WriteBufferSize: 1024,
+	}
+	messages = []m.Message{}
+)
+
+type mainData struct {
+	ID   uint
+	Mess []m.Message
 }
 
 // MakeHandler - handler wrapper
@@ -25,17 +33,20 @@ func getTemlates(name string) (*template.Template, error) {
 	return template.ParseFiles(templ.Root, templ.TemplateMap[name])
 }
 
-// pageMainHandleFunc handler for main page
-func pageMainHandleFunc(w http.ResponseWriter, r *http.Request) {
-	messages := []m.Message{}
+// mainHandleFunc handler for main page
+func mainHandleFunc(w http.ResponseWriter, r *http.Request) {
 	m.GetMessages(&messages)
 	templates, err := getTemlates("main")
 	main := template.Must(templates, err)
-	main.Execute(w, messages)
+	sess := s.Instance(r)
+	if ID, err := s.GetUserID(sess); err == nil {
+		main.Execute(w, &mainData{ID: ID, Mess: messages})
+	}
+	return
 }
 
 // MainHandler - for main page
-var MainHandler = MakeHandler(pageMainHandleFunc)
+var MainHandler = MakeHandler(mainHandleFunc)
 
 // loginHandleFunc - render template for login page
 func loginHandleFunc(w http.ResponseWriter, r *http.Request) {
@@ -160,7 +171,7 @@ func wsHandleFunc(w http.ResponseWriter, r *http.Request) {
 	user := &m.User{}
 	user.GetUserByID(userID)
 	hub := GetHub()
-	client := &Client{*user, conn, make(chan []byte, 256)}
+	client := &Client{*user, conn, make(chan *SendMessage, 256)}
 	hub.register <- client
 	go client.write()
 	client.read()

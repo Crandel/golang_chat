@@ -29,7 +29,6 @@ func DisallowAnonMiddleware(next http.Handler) http.Handler {
 			http.Redirect(w, r, url, http.StatusMovedPermanently)
 			return
 		}
-		log.Println("DisallowAnonMiddleware")
 		next.ServeHTTP(w, r)
 	})
 }

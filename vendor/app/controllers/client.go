@@ -32,10 +32,11 @@ var (
 type Client struct {
 	m.User
 	con  *soc.Conn
-	send chan []byte
+	send chan *SendMessage
 }
 
-type sendMessage struct {
+// SendMessage - json reflection
+type SendMessage struct {
 	Message  string `json:"message"`
 	ID       uint   `json:"id"`
 	UserID   uint   `json:"user_id"`
@@ -52,15 +53,17 @@ func (c *Client) read() {
 	c.con.SetReadDeadline(time.Now().Add(pongWait))
 	c.con.SetPongHandler(func(string) error { c.con.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 	for {
-		_, message, err := c.con.ReadMessage()
+		message := &SendMessage{}
+		err := c.con.ReadJSON(message)
 		if err != nil {
 			if soc.IsUnexpectedCloseError(err, soc.CloseGoingAway) {
 				log.Printf("error: %v", err)
 			}
 			break
 		}
-		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
+		message.Message = string(bytes.TrimSpace(bytes.Replace([]byte(message.Message), newline, space, -1)))
 		hub.broadcast <- message
+
 	}
 }
 
@@ -79,10 +82,12 @@ func (c *Client) write() {
 				c.con.WriteMessage(soc.CloseMessage, []byte{})
 				return
 			}
-			messageID := c.SaveMessage(string(message))
-			sendJSON := sendMessage{Message: string(message), ID: messageID, UserID: c.ID, Username: c.Login}
-			log.Printf("%#v\n\n", sendJSON)
-			if err := c.con.WriteJSON(sendJSON); err != nil {
+			messageID := c.SaveMessage(string(message.Message))
+			message.ID = messageID
+			user := &m.User{}
+			user.GetUserByID(message.UserID)
+			message.Username = user.Login
+			if err := c.con.WriteJSON(message); err != nil {
 				log.Println("Error in send json message", err)
 				return
 			}
