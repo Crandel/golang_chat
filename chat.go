@@ -8,6 +8,7 @@ import (
 	"app/utils/settings"
 	"encoding/json"
 	"log"
+	_ "net/http/pprof"
 	"runtime"
 )
 
