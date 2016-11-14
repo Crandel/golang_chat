@@ -3,6 +3,7 @@ package controllers
 import (
 	m "app/models"
 	s "app/utils/session"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -82,7 +83,7 @@ func loginHandleFunc(w http.ResponseWriter, r *http.Request) {
 				}
 				http.Redirect(w, r, url, http.StatusMovedPermanently)
 			} else {
-				http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+				http.Error(w, fmt.Sprintf("User %s not found", user.Login), http.StatusNotFound)
 			}
 			return
 		}
@@ -110,11 +111,11 @@ func signHandleFunc(w http.ResponseWriter, r *http.Request) {
 		if err == nil || !result {
 			sess := s.Instance(r)
 			s.Clear(sess)
+			err := user.CreateUser()
 			if err != nil {
-				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+				http.Error(w, err.Error(), http.StatusNotAcceptable)
 				return
 			}
-			user.CreateUser()
 			sess.Values["id"] = user.ID
 			err = sess.Save(r, w)
 			if err != nil {

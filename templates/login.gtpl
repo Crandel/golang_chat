@@ -4,7 +4,7 @@
   <h1>{{template "title" .}}</h1>
 </div>
 
-<form autocomplete="on">
+<form autocomplete="on" method="post">
     <div id="error" style="color: red;"></div>
     <div class="form-group">
         <label>Insert login

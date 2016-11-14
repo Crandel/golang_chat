@@ -1,11 +1,11 @@
 $(document).ready(function(){
 
     $('#sign').click(function(){
-        window.location.href = "sign"
+        window.location.href = "sign";
     });
 
     function showError(error){
-        $('#error').html(error)
+        $('#error').html(error);
     }
 
     $('#submit').click(function(){
@@ -13,15 +13,15 @@ $(document).ready(function(){
             password = $('#password').val();
         $('#error').empty();
         if(login && password){
-            $.post('login', {'login': login, 'password': password}, function(data){
-                if (data.error){
-                    showError(data.error)
-                }else{
-                    window.location.href = '/'
-                }
-            });
+            $.post('login', {'login': login, 'password': password})
+                .done(function(data){
+                    window.location.href = '/';
+                })
+                .fail(function(data){
+                    showError(data.responseText);
+                });
         }else{
-            showError('Please fill all fields')
+            showError('Please fill all fields');
         }
     });
 });

@@ -1,11 +1,11 @@
 $(document).ready(function(){
 
     $('#login').click(function(){
-        window.location.href = "login"
+        window.location.href = "login";
     });
 
     function showError(error){
-        $('#error').html(error)
+        $('#error').html(error);
     }
 
     $('#submit').click(function(){
@@ -16,15 +16,15 @@ $(document).ready(function(){
         $('#error').empty();
         if(password.val() === password2.val()){
             if (login && email && password){
-                $.post('sign', {'login': login, 'email': email, 'password': password.val()}, function(data){
-                    if (data.error){
-                        showError(data.error)
-                    }else{
-                        window.location.href = '/'
-                    }
+                $.post('sign', {'login': login, 'email': email, 'password': password.val()})
+                .done(function(data){
+                    window.location.href = '/';
+                })
+                .fail(function(data){
+                    showError(data.responseText);
                 });
             }else{
-                showError('Please fill all fields')
+                showError('Please fill all fields');
             }
         }else{
             showError('Passwords must be the same');

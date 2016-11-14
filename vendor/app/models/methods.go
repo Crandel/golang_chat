@@ -37,7 +37,7 @@ func GetMessages(m *[]Message) {
 }
 
 // CreateUser ...
-func (user *User) CreateUser() {
+func (user *User) CreateUser() error {
 	dbase := db.DB
-	dbase.Create(user)
+	return dbase.Create(user).Error
 }

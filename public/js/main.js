@@ -29,7 +29,7 @@ $(document).ready(function(){
             "</div>"
             ],
             array = message;
-        if (ob.id === 0){
+        if (ob.id != 0){
             array = $.merge(array, buttons);
         }
         var m = $(array.join('\n'));
