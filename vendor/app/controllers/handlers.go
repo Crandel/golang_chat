@@ -156,6 +156,7 @@ func NotFoundHandleFunc(w http.ResponseWriter, r *http.Request) {
 	log.Println("Not found handler")
 	templates, err := getTemlates("404")
 	notFound := template.Must(templates, err)
+	w.WriteHeader(404)
 	notFound.Execute(w, nil)
 }
 
