@@ -38,11 +38,14 @@ Main Chat page
       <input class="btn btn-default" type="button", id="signout", value="Sign Out">
     </div>
   </div>
-  <div id="myModal" class="modal">
+  <div id="editModal" class="modal">
     <!-- Modal content -->
     <div class="modal-content">
-      <span class="close">x</span>
-      <textarea name="message" id="textarea-edit" rows="2" cols="1"></textarea>
+      <h3>Please edit message</h3>
+      <textarea name="message" id="textarea-edit" rows="2" cols="50"></textarea></br>
+      <button id="saveButton" type='button' class='btn btn-success btn-sm'>
+        <span class='glyphicon glyphicon-ok' aria-hidden="true"></span> Save
+      </button>
     </div>
   </div>
 </div>

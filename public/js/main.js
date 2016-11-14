@@ -75,17 +75,30 @@ $(document).ready(function(){
     });
 
     $('.edit').click(function(){
-        var parent = $(this).parent().parent(),
-            id = parent;
-        var modal = $('#myModal');
-        console.log(modal);
+        var par = $(this).parent().parent(),
+            id = par[0].id;
+        console.log(par);
+        console.log(id, "id");
+        var modal = $('#editModal');
+        modal.data("id", id);
         modal.css('display', 'block');
-        // $.post( "/edit/message", {})
-        //     .done(function(data) {
-        //         console.log( data );
-        // });
     });
 
+    $('#saveButton').click(function(){
+        var modal = $('#editModal'),
+            id = modal.data()['id'],
+            message=$(this).prev().val();
+        console.log($(this).prev());
+        console.log(id, message);
+        $.post( "/edit/message/" + id, {'message': message})
+            .done(function(data) {
+                console.log(data.responseText);
+                modal.css('display', 'none');
+            })
+            .fail(function(data){
+                console.log(data.responseText);
+            });
+    });
     // income message handler
     sock.onmessage = function(event) {
         var obj = JSON.parse(event.data);
