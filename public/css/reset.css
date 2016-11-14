@@ -29,9 +29,8 @@ footer, header, hgroup, menu, nav, section {
     display: block;
 }
 body {
-    font:14px/17px Arial, Helvetica, sans-serif;
-    color:#787878;
-    min-width:1002px;
+    padding: 0;
+    margin: 0;
 }
 a{
     color:#4181be;

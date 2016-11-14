@@ -1,28 +1,121 @@
 #subscribe {
+  margin: 0 auto;
+  margin-top: 20px;
+  max-width: 1500px;
+  min-width: 350px;
   height: 500px;
   background: AntiqueWhite;
   overflow: auto;
 }
-
-#subscribe > div > span {
-  font-weight: bold;
+body {
+  font:15px/18px Arial, Helvetica, sans-serif;
+}
+h1 {
+  text-align: center;
 }
 .black{
   color: black;
 }
-
 .green {
   color: green;
 }
-
 .yellow {
   color: yellow;
 }
-
 .blue {
   color: blue;
 }
-
 .red {
   color: red;
+}
+.wrapper {
+  margin: 0 auto;
+}
+.chat-div-line,
+.signout-div {
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid brown;
+  border-radius: 5px;
+}
+.text-user-inline {
+  display: inline-block;
+  float: left;
+  vertical-align: middle;
+  line-height: 27px;
+}
+.text-user-inline time {
+  font-weight: bold;
+  color:#787878;
+}
+.text-user-inline .userlogin {
+  font-weight: bold;
+  font-style: italic;
+}
+.button-right {
+  float: right;
+}
+.wrapper-input {
+  max-width: 1500px;
+  min-width: 350px;
+  margin: 0 auto
+}
+.signout-div {
+  // width: 350px;
+  float: left;
+  margin-top: 15px;
+  background-color: #FAEBD7;
+}
+footer {
+  margin: 0 auto;
+  max-width: 1500px;
+  min-width: 350px;
+}
+footer span {
+  display: inline-block;
+  margin: 15px;
+  float: right;
+}
+.clearfix::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
 }

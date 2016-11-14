@@ -20,8 +20,8 @@ var (
 )
 
 type mainData struct {
-	ID   uint
-	Mess []m.Message
+	AuthUser uint
+	Mess     []m.Message
 }
 
 // MakeHandler - handler wrapper
@@ -39,9 +39,12 @@ func mainHandleFunc(w http.ResponseWriter, r *http.Request) {
 	templates, err := getTemlates("main")
 	main := template.Must(templates, err)
 	sess := s.Instance(r)
-	if ID, err := s.GetUserID(sess); err == nil {
-		main.Execute(w, &mainData{ID: ID, Mess: messages})
+	ID, err := s.GetUserID(sess)
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+		return
 	}
+	main.Execute(w, &mainData{AuthUser: ID, Mess: messages})
 	return
 }
 
@@ -79,7 +82,7 @@ func loginHandleFunc(w http.ResponseWriter, r *http.Request) {
 				}
 				http.Redirect(w, r, url, http.StatusMovedPermanently)
 			} else {
-				http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+				http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 			}
 			return
 		}

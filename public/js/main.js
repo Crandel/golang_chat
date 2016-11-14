@@ -7,17 +7,40 @@ $(document).ready(function(){
     }
     var colors = ['green', 'red', 'yellow', 'blue'];
     var fillCollor = Object.create(null);
+    function createMessageBox(ob){
+        var date = new Date(),
+            options = {hour12: false},
+            message = [
+            "<div id=" + ob.id + " data-user-id=" + ob.user_id + " class='chat-div-line clearfix'>",
+            " <div class='text-user-inline'>",
+            "  <time>[" + date.toLocaleTimeString('en-US', options) + "]</time>",
+            "  <span class='userlogin " + ob.colorname + "'>" + ob.username + "</span>",
+            "  <span>" + ob.message + "</span>",
+            " </div>"],
+            buttons = [
+            " <div class='button-right'>",
+            "  <button type='button' class='edit btn btn-warning btn-sm'>",
+            "   <span class='glyphicon glyphicon-pencil' aria-hidden=\"true\"></span> Edit",
+            "  </button>",
+            "  <button type='button' class='remove btn btn-danger btn-sm'>",
+            "   <span class='glyphicon glyphicon-remove' aria-hidden=\"true\"></span> Remove",
+            "  </button>",
+            " </div>",
+            "</div>"
+            ],
+            array = message;
+        if (ob.id === 0){
+            array = $.merge(array, buttons);
+        }
+        var m = $(array.join('\n'));
+        return m;
+    }
+
     // show message in div#subscribe
     function showMessage(ob) {
         var messageElem = $('#subscribe'),
             height = 0,
-            date = new Date(),
-            options = {hour12: false},
-            username = $('<span/>', {'class': ob.colorname, 'html': ' ' + ob.username + ': '})[0].outerHTML,
-            m = $('<div/>', {
-                'id': ob.id,
-                'data-user-id': ob.user_id,
-                'html': '[' + date.toLocaleTimeString('en-US', options) + ']' + username + ob.message});
+            m = createMessageBox(ob);
         messageElem.append(m);
         messageElem.find('div').each(function(i, value){
             height += parseInt($(this).height());
@@ -27,7 +50,7 @@ $(document).ready(function(){
     }
 
     function getSystemMessage(m){
-        return {'username': 'System','id': 0, 'user_id': 0, 'classname':'black', 'message': m};
+        return {'username': 'System','id': 0, 'user_id': 0, 'colorname':'black', 'message': m};
     }
     function sendMessage(){
         var msg = $('#message'),
@@ -49,6 +72,18 @@ $(document).ready(function(){
         if(e.keyCode == 13){
             sendMessage();
         }
+    });
+
+    $('.edit').click(function(){
+        var parent = $(this).parent().parent(),
+            id = parent;
+        var modal = $('#myModal');
+        console.log(modal);
+        modal.css('display', 'block');
+        // $.post( "/edit/message", {})
+        //     .done(function(data) {
+        //         console.log( data );
+        // });
     });
 
     // income message handler

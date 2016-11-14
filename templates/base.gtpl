@@ -13,7 +13,7 @@
   <body>
     {{block "content" .}}{{end}}
     <footer>
-      <p>Property of Vitaliy Drevenchuk 2016</p>
+      <span>Property of Vitaliy Drevenchuk 2016</span>
       {{block "footer" .}}{{end}}
     </footer>
   </body>
