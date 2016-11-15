@@ -1,8 +1,6 @@
 package models
 
-import (
-	"app/utils/db"
-)
+import "app/utils/db"
 
 // Automigrate ...
 func Automigrate() {
@@ -26,9 +24,9 @@ func GetUserByID(id uint) (*User, error) {
 }
 
 // SaveMessage - save single message
-func (user *User) SaveMessage(m string) (uint, error) {
+func SaveMessage(uid uint, m string) (uint, error) {
 	dbase := db.DB
-	message := Message{UserID: user.ID, Message: m}
+	message := Message{UserID: uid, Message: m}
 	err := dbase.Save(&message).Error
 	if err != nil {
 		return 0, err

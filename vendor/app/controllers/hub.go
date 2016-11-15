@@ -1,5 +1,10 @@
 package controllers
 
+import (
+	m "app/models"
+	"log"
+)
+
 var hub *Hub
 
 // Hub - struct for maintain clients and messages
@@ -33,6 +38,7 @@ func (h *Hub) run() {
 				close(client.send)
 			}
 		case message := <-h.broadcast:
+			SaveMessageFromBroadcast(message)
 			for client := range h.clients {
 				select {
 				case client.send <- message:
@@ -48,4 +54,20 @@ func (h *Hub) run() {
 // GetHub ...
 func GetHub() *Hub {
 	return hub
+}
+
+// SaveMessageFromBroadcast ...
+func SaveMessageFromBroadcast(message *SendMessage) {
+	messageID, err := m.SaveMessage(uint(message.UserID), string(message.Message))
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	message.ID = messageID
+	user, err := m.GetUserByID(message.UserID)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	message.Username = user.Login
 }

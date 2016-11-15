@@ -10,6 +10,8 @@ $(document).ready(function(){
     function createMessageBox(ob){
         var date = new Date(),
             options = {hour12: false},
+            msg = $('#message'),
+            id = msg.data('id'),
             message = [
             "<div id=" + ob.id + " data-user-id=" + ob.user_id + " class='chat-div-line clearfix'>",
             " <div class='text-user-inline'>",
@@ -29,7 +31,7 @@ $(document).ready(function(){
             "</div>"
             ],
             array = message;
-        if (ob.id != 0){
+        if (ob.user_id == id){
             array = $.merge(array, buttons);
         }
         var m = $(array.join('\n'));
@@ -54,9 +56,12 @@ $(document).ready(function(){
     }
     function sendMessage(){
         var msg = $('#message'),
-            obj = {'message': msg.val(), 'user_id': msg.data('id')};
-        sock.send(JSON.stringify(obj));
-        msg.val('').focus();
+            mes = msg.val();
+        if (mes.length > 0){
+            var obj = {'message': mes, 'user_id': msg.data('id')};
+            sock.send(JSON.stringify(obj));
+            msg.val('').focus();
+        }
     }
 
     sock.onopen = function(){
