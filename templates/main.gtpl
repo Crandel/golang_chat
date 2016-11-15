@@ -41,7 +41,7 @@ Main Chat page
   <div id="editModal" class="modal">
     <!-- Modal content -->
     <div class="modal-content">
-      <h3>Please edit message</h3>
+      <h4>Please edit message</h4>
       <textarea name="message" id="textarea-edit" rows="2" cols="50"></textarea></br>
       <button id="saveButton" type='button' class='btn btn-success btn-sm'>
         <span class='glyphicon glyphicon-ok' aria-hidden="true"></span> Save

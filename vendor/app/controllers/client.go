@@ -82,10 +82,17 @@ func (c *Client) write() {
 				c.con.WriteMessage(soc.CloseMessage, []byte{})
 				return
 			}
-			messageID := c.SaveMessage(string(message.Message))
+			messageID, err := c.SaveMessage(string(message.Message))
+			if err != nil {
+				log.Println(err)
+				return
+			}
 			message.ID = messageID
-			user := &m.User{}
-			user.GetUserByID(message.UserID)
+			user, err := m.GetUserByID(message.UserID)
+			if err != nil {
+				log.Println(err)
+				return
+			}
 			message.Username = user.Login
 			if err := c.con.WriteJSON(message); err != nil {
 				log.Println("Error in send json message", err)

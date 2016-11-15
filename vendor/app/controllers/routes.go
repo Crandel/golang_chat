@@ -34,13 +34,16 @@ func RouteInit() *mux.Router {
 	copy(authMidList, baseMidList)
 
 	// append from base list
+	authMidList = append(authMidList, UserInContext)
 	authMidList = append(authMidList, DisallowAnonMiddleware)
+
 	baseAlice := alice.New(baseMidList...)
 	authAlice := alice.New(authMidList...)
 	router.Handle("/", authAlice.Then(MainHandler)).Name("home")
 	router.Handle("/login", baseAlice.Then(LoginHandler)).Methods("GET", "POST").Name("login")
 	router.Handle("/sign", baseAlice.Then(SignHandler)).Methods("GET", "POST").Name("sign")
 	router.Handle("/signout", baseAlice.Then(SignOutHandler)).Methods("GET").Name("signout")
+	router.Handle("/message/{id}", authAlice.Then(MessageHandler)).Methods("GET", "POST", "DELETE").Name("message")
 	router.Handle("/ws", authAlice.Then(WsHandler)).Name("chat")
 	router.PathPrefix("/static/").Handler(baseAlice.Then(http.StripPrefix("/static/", http.FileServer(http.Dir("./public")))))
 	router.NotFoundHandler = http.HandlerFunc(NotFoundHandleFunc)

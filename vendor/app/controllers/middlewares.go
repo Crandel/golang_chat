@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	m "app/models"
 	s "app/utils/session"
+	"context"
 	"log"
 	"net/http"
 )
@@ -18,9 +20,8 @@ func LogMiddleware(next http.Handler) http.Handler {
 func DisallowAnonMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Get session
-		sess := s.Instance(r)
-		// If user is not authenticated, don't allow them to access the page
-		if !s.CheckUserInSession(sess) {
+		user := r.Context().Value("user")
+		if user == nil {
 			url, err := RedirectFunc("login")
 			if err != nil {
 				http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
@@ -28,6 +29,27 @@ func DisallowAnonMiddleware(next http.Handler) http.Handler {
 			}
 			http.Redirect(w, r, url, http.StatusMovedPermanently)
 			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
+// UserInContext - save user from session in every request
+func UserInContext(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		sess := s.Instance(r)
+		if s.CheckUserInSession(sess) {
+			id, err := s.GetUserID(sess)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			// return user pointer!
+			user, err := m.GetUserByID(id)
+			if err == nil {
+				ctx := context.WithValue(r.Context(), "user", user)
+				r = r.WithContext(ctx)
+			}
 		}
 		next.ServeHTTP(w, r)
 	})

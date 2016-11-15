@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	valid "github.com/asaskevich/govalidator"
+	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 )
 
@@ -39,13 +40,15 @@ func mainHandleFunc(w http.ResponseWriter, r *http.Request) {
 	m.GetMessages(&messages)
 	templates, err := getTemlates("main")
 	main := template.Must(templates, err)
-	sess := s.Instance(r)
-	ID, err := s.GetUserID(sess)
-	if err != nil {
+	// safe type conversion
+	value := r.Context().Value("user")
+	user, check := value.(*m.User)
+	if !check {
+		log.Println("User not Found in context")
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 		return
 	}
-	main.Execute(w, &mainData{AuthUser: ID, Mess: messages})
+	main.Execute(w, &mainData{AuthUser: user.ID, Mess: messages})
 	return
 }
 
@@ -151,6 +154,25 @@ func signOutHandleFunc(w http.ResponseWriter, r *http.Request) {
 // SignOutHandler ...
 var SignOutHandler = MakeHandler(signOutHandleFunc)
 
+// messageHandleFunc - worked with messages
+func messageHandleFunc(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+	log.Println(id)
+	switch r.Method {
+	case "GET":
+		fmt.Fprintf(w, "Message GET")
+	case "POST":
+		fmt.Fprintf(w, "Message POST")
+	case "DELETE":
+		fmt.Fprintf(w, "Message DELETE")
+	default:
+		fmt.Fprint(w, "Unknown Method")
+	}
+}
+
+// MessageHandler ...
+var MessageHandler = MakeHandler(messageHandleFunc)
+
 // NotFoundHandleFunc ...
 func NotFoundHandleFunc(w http.ResponseWriter, r *http.Request) {
 	log.Println("Not found handler")
@@ -167,14 +189,12 @@ func wsHandleFunc(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	sess := s.Instance(r)
-	userID, err := s.GetUserID(sess)
-	if err != nil {
-		log.Println(err)
+	// safe type conversion
+	user, check := r.Context().Value("user").(*m.User)
+	if !check {
+		log.Println("User not Found in context")
 		return
 	}
-	user := &m.User{}
-	user.GetUserByID(userID)
 	hub := GetHub()
 	client := &Client{*user, conn, make(chan *SendMessage, 256)}
 	hub.register <- client

@@ -1,6 +1,8 @@
 package models
 
-import "app/utils/db"
+import (
+	"app/utils/db"
+)
 
 // Automigrate ...
 func Automigrate() {
@@ -12,32 +14,42 @@ func Automigrate() {
 // GetUserByLoginPass ...
 func (user *User) GetUserByLoginPass(login string, pass string) bool {
 	dbase := db.DB
-	err := dbase.Where(&User{Login: login, Password: pass}).First(user).RecordNotFound()
-	return err
+	return dbase.Where(&User{Login: login, Password: pass}).First(user).RecordNotFound()
 }
 
 // GetUserByID ...
-func (user *User) GetUserByID(id uint) {
+func GetUserByID(id uint) (*User, error) {
 	dbase := db.DB
-	dbase.First(user, id)
+	user := &User{}
+	err := dbase.First(user, id).Error
+	return user, err
 }
 
 // SaveMessage - save single message
-func (user *User) SaveMessage(m string) uint {
+func (user *User) SaveMessage(m string) (uint, error) {
 	dbase := db.DB
 	message := Message{UserID: user.ID, Message: m}
-	dbase.Save(&message)
-	return message.ID
+	err := dbase.Save(&message).Error
+	if err != nil {
+		return 0, err
+	}
+	return message.ID, nil
 }
 
 // GetMessages ...
-func GetMessages(m *[]Message) {
+func GetMessages(m *[]Message) error {
 	dbase := db.DB
-	dbase.Preload("User").Find(m)
+	return dbase.Preload("User").Find(m).Error
 }
 
 // CreateUser ...
 func (user *User) CreateUser() error {
 	dbase := db.DB
 	return dbase.Create(user).Error
+}
+
+// GetMessage - return message using id
+func (m *Message) GetMessage(id uint) error {
+	dbase := db.DB
+	return dbase.First(m, id).Error
 }

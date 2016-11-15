@@ -74,7 +74,7 @@ $(document).ready(function(){
         }
     });
 
-    $('.edit').click(function(){
+    $('body').on('click', '.edit', function(){
         var par = $(this).parent().parent(),
             id = par[0].id;
         console.log(par);
@@ -84,19 +84,30 @@ $(document).ready(function(){
         modal.css('display', 'block');
     });
 
+    $('body').on('click', '.remove', function(){
+        var par = $(this).parent().parent(),
+            id = par[0].id;
+        console.log(id, "id");
+        $.delete("/message/" + id)
+        .done(function(data){
+            console.log(data, 'success');
+        })
+        .fail(function(data){
+            console.log(data, 'fail');
+        });
+    });
+
     $('#saveButton').click(function(){
         var modal = $('#editModal'),
             id = modal.data()['id'],
-            message=$(this).prev().val();
-        console.log($(this).prev());
-        console.log(id, message);
-        $.post( "/edit/message/" + id, {'message': message})
+            message=$(this).prev().prev().val();
+        $.post("/message/" + id, {'message': message})
             .done(function(data) {
-                console.log(data.responseText);
+                console.log(data, 'edit success');
                 modal.css('display', 'none');
             })
             .fail(function(data){
-                console.log(data.responseText);
+                console.log(data, 'edit fail');
             });
     });
     // income message handler
