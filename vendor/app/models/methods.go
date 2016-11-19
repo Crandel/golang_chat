@@ -24,14 +24,13 @@ func GetUserByID(id uint) (*User, error) {
 }
 
 // SaveMessage - save single message
-func SaveMessage(uid uint, m string) (uint, error) {
+func (m *Message) SaveMessage() (uint, error) {
 	dbase := db.DB
-	message := Message{UserID: uid, Message: m}
-	err := dbase.Save(&message).Error
+	err := dbase.Save(m).Error
 	if err != nil {
 		return 0, err
 	}
-	return message.ID, nil
+	return m.ID, nil
 }
 
 // GetMessages ...
@@ -47,7 +46,13 @@ func (user *User) CreateUser() error {
 }
 
 // GetMessage - return message using id
-func (m *Message) GetMessage(id uint) error {
+func (m *Message) GetMessage() error {
 	dbase := db.DB
-	return dbase.First(m, id).Error
+	return dbase.First(m, m.ID).Error
+}
+
+// DeleteMessage delete message, must be id!
+func (m *Message) DeleteMessage() error {
+	dbase := db.DB
+	return dbase.Delete(m).Error
 }

@@ -57,8 +57,9 @@ func GetHub() *Hub {
 }
 
 // SaveMessageFromBroadcast ...
-func SaveMessageFromBroadcast(message *SendMessage) {
-	messageID, err := m.SaveMessage(uint(message.UserID), string(message.Message))
+func SaveMessageFromBroadcast(sm *SendMessage) {
+	message := &m.Message{UserID: uint(sm.UserID), Message: sm.Message}
+	messageID, err := message.SaveMessage()
 	if err != nil {
 		log.Println(err)
 		return
@@ -69,5 +70,5 @@ func SaveMessageFromBroadcast(message *SendMessage) {
 		log.Println(err)
 		return
 	}
-	message.Username = user.Login
+	sm.Username = user.Login
 }

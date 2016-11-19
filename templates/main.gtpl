@@ -16,7 +16,7 @@ Main Chat page
       <div class="text-user-inline ">
         <time>[{{.CreatedAt.Format "15:04:05"}}]</time>
         <span class="userlogin black"> {{.User.Login}}:</span>
-        <span>{{.Message}}</span>
+        <span class="message">{{.Message}}</span>
       </div>
       {{if eq $.AuthUser .User.ID}}
       <div class='button-right'>

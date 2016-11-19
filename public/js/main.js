@@ -17,7 +17,7 @@ $(document).ready(function(){
             " <div class='text-user-inline'>",
             "  <time>[" + date.toLocaleTimeString('en-US', options) + "]</time>",
             "  <span class='userlogin " + ob.colorname + "'>" + ob.username + "</span>",
-            "  <span>" + ob.message + "</span>",
+            "  <span class='message'>" + ob.message + "</span>",
             " </div>"],
             buttons = [
             " <div class='button-right'>",
@@ -92,13 +92,12 @@ $(document).ready(function(){
     $('body').on('click', '.remove', function(){
         var par = $(this).parent().parent(),
             id = par[0].id;
-        console.log(id, "id");
-        $.delete("/message/" + id)
-        .done(function(data){
-            console.log(data, 'success');
-        })
-        .fail(function(data){
-            console.log(data, 'fail');
+        $.ajax({
+            url: "/message/" + id,
+            type: 'DELETE',
+            success: function(){
+                $("#" + id).remove();
+            }
         });
     });
 
@@ -107,8 +106,9 @@ $(document).ready(function(){
             id = modal.data()['id'],
             message=$(this).prev().prev().val();
         $.post("/message/" + id, {'message': message})
-            .done(function(data) {
-                console.log(data, 'edit success');
+            .done(function() {
+                messageDiv = $("#" + id);
+                messageDiv.find('.message').html(message);
                 modal.css('display', 'none');
             })
             .fail(function(data){

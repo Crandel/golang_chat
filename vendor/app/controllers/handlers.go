@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strconv"
 
 	valid "github.com/asaskevich/govalidator"
 	"github.com/gorilla/mux"
@@ -156,15 +157,32 @@ var SignOutHandler = MakeHandler(signOutHandleFunc)
 
 // messageHandleFunc - worked with messages
 func messageHandleFunc(w http.ResponseWriter, r *http.Request) {
-	id := mux.Vars(r)["id"]
-	log.Println(id)
+	id, err := strconv.ParseUint(mux.Vars(r)["id"], 10, 32)
+	if err != nil {
+		http.Error(w, "Message wasn`t save", http.StatusBadGateway)
+		return
+	}
+	id32 := uint(id)
+	message := &m.Message{ID: id32}
 	switch r.Method {
 	case "GET":
 		fmt.Fprintf(w, "Message GET")
 	case "POST":
-		fmt.Fprintf(w, "Message POST")
+		r.ParseForm()
+		mes := r.FormValue("message")
+		message.GetMessage()
+		message.Message = mes
+		_, err := message.SaveMessage()
+		if err != nil {
+			http.Error(w, "Message wasn`t saved", http.StatusBadGateway)
+			return
+		}
 	case "DELETE":
-		fmt.Fprintf(w, "Message DELETE")
+		err := message.DeleteMessage()
+		if err != nil {
+			http.Error(w, "Message wasn`t deleted", http.StatusBadGateway)
+			return
+		}
 	default:
 		fmt.Fprint(w, "Unknown Method")
 	}
