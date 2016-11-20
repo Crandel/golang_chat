@@ -7,10 +7,8 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"strconv"
 
 	valid "github.com/asaskevich/govalidator"
-	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 )
 
@@ -154,42 +152,6 @@ func signOutHandleFunc(w http.ResponseWriter, r *http.Request) {
 
 // SignOutHandler ...
 var SignOutHandler = MakeHandler(signOutHandleFunc)
-
-// messageHandleFunc - worked with messages
-func messageHandleFunc(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.ParseUint(mux.Vars(r)["id"], 10, 32)
-	if err != nil {
-		http.Error(w, "Message wasn`t save", http.StatusBadGateway)
-		return
-	}
-	id32 := uint(id)
-	message := &m.Message{ID: id32}
-	switch r.Method {
-	case "GET":
-		fmt.Fprintf(w, "Message GET")
-	case "POST":
-		r.ParseForm()
-		mes := r.FormValue("message")
-		message.GetMessage()
-		message.Message = mes
-		_, err := message.SaveMessage()
-		if err != nil {
-			http.Error(w, "Message wasn`t saved", http.StatusBadGateway)
-			return
-		}
-	case "DELETE":
-		err := message.DeleteMessage()
-		if err != nil {
-			http.Error(w, "Message wasn`t deleted", http.StatusBadGateway)
-			return
-		}
-	default:
-		fmt.Fprint(w, "Unknown Method")
-	}
-}
-
-// MessageHandler ...
-var MessageHandler = MakeHandler(messageHandleFunc)
 
 // NotFoundHandleFunc ...
 func NotFoundHandleFunc(w http.ResponseWriter, r *http.Request) {

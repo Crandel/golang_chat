@@ -38,7 +38,7 @@ func (h *Hub) run() {
 				close(client.send)
 			}
 		case message := <-h.broadcast:
-			SaveMessageFromBroadcast(message)
+			changeMessage(message)
 			for client := range h.clients {
 				select {
 				case client.send <- message:
@@ -56,9 +56,14 @@ func GetHub() *Hub {
 	return hub
 }
 
-// SaveMessageFromBroadcast ...
-func SaveMessageFromBroadcast(sm *SendMessage) {
-	message := &m.Message{UserID: uint(sm.UserID), Message: sm.Message}
+// changeMessage - sync message with database
+func changeMessage(sm *SendMessage) {
+	log.Println(sm, "changeMessage")
+	message := &m.Message{ID: sm.ID, UserID: uint(sm.UserID), Message: sm.Message}
+	if sm.IsDelete {
+		message.DeleteMessage()
+		return
+	}
 	messageID, err := message.SaveMessage()
 	if err != nil {
 		log.Println(err)

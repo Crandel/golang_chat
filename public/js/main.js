@@ -5,13 +5,19 @@ $(document).ready(function(){
     catch(err){
         var sock = new WebSocket('wss://' + window.location.host + '/ws');
     }
-    var colors = ['green', 'red', 'yellow', 'blue'];
-    var fillCollor = Object.create(null);
+
+    var colors = ['green', 'red', 'yellow', 'blue'],
+        fillCollor = Object.create(null);
+
+    function getUserId(){
+        var msg = $('#message');
+        return msg.data('id');
+    }
+
     function createMessageBox(ob){
         var date = new Date(),
             options = {hour12: false},
-            msg = $('#message'),
-            id = msg.data('id'),
+            id = getUserId(),
             message = [
             "<div id=" + ob.id + " data-user-id=" + ob.user_id + " class='chat-div-line clearfix'>",
             " <div class='text-user-inline'>",
@@ -34,8 +40,7 @@ $(document).ready(function(){
         if (ob.user_id == id){
             array = $.merge(array, buttons);
         }
-        var m = $(array.join('\n'));
-        return m;
+        return $(array.join('\n'));
     }
 
     // show message in div#subscribe
@@ -51,15 +56,21 @@ $(document).ready(function(){
         messageElem.animate({scrollTop: height});
     }
 
+    // This message shows when some system events happens
     function getSystemMessage(m){
         return {'username': 'System','id': 0, 'user_id': 0, 'colorname':'black', 'message': m};
     }
-    function sendMessage(){
+
+    function sendMessage(obj){
+        sock.send(JSON.stringify(obj));
+    }
+
+    function sendMessageFromInput(){
         var msg = $('#message'),
             mes = msg.val();
         if (mes.length > 0){
             var obj = {'message': mes, 'user_id': msg.data('id')};
-            sock.send(JSON.stringify(obj));
+            sendMessage(obj);
             msg.val('').focus();
         }
     }
@@ -70,62 +81,58 @@ $(document).ready(function(){
 
     // send message from form
     $('#submit').click(function() {
-        sendMessage();
+        sendMessageFromInput();
     });
 
     $('#message').keyup(function(e){
         if(e.keyCode == 13){
-            sendMessage();
+            sendMessageFromInput();
         }
     });
 
     $('body').on('click', '.edit', function(){
-        var par = $(this).parent().parent(),
-            id = par[0].id;
-        console.log(par);
-        console.log(id, "id");
+        var par = $(this).parent().parent()[0],
+            id = par.id;
         var modal = $('#editModal');
         modal.data("id", id);
         modal.css('display', 'block');
     });
 
     $('body').on('click', '.remove', function(){
-        var par = $(this).parent().parent(),
-            id = par[0].id;
-        $.ajax({
-            url: "/message/" + id,
-            type: 'DELETE',
-            success: function(){
-                $("#" + id).remove();
-            }
-        });
+        var par = $(this).parent().parent()[0],
+            id = par.id;
+        sendMessage({user_id: getUserId(), id:+id, is_delete: true});
+        par.remove();
     });
 
     $('#saveButton').click(function(){
         var modal = $('#editModal'),
             id = modal.data()['id'],
             message=$(this).prev().prev().val();
-        $.post("/message/" + id, {'message': message})
-            .done(function() {
-                messageDiv = $("#" + id);
-                messageDiv.find('.message').html(message);
-                modal.css('display', 'none');
-            })
-            .fail(function(data){
-                console.log(data, 'edit fail');
-            });
+        sendMessage({message: message, id: +id, user_id: getUserId()});
+        modal.css('display', 'none');
     });
+
     // income message handler
     sock.onmessage = function(event) {
-        var obj = JSON.parse(event.data);
-        if (obj.user_id in fillCollor){
-            obj.colorname = fillCollor[obj.user_id];
+        var obj = JSON.parse(event.data),
+            message_div = $("#" + obj.id);
+        if (message_div){
+            if (obj.is_delete){
+                message_div.remove();
+                return
+            }
+            message_div.find('.message').html(obj.message);
         }else{
-            var color = colors[Math.floor(Math.random() * colors.length)];
-            obj.colorname = color;
-            fillCollor[obj.user_id] = color;
+            if (obj.user_id in fillCollor){
+                obj.colorname = fillCollor[obj.user_id];
+            }else{
+                var color = colors[Math.floor(Math.random() * colors.length)];
+                obj.colorname = color;
+                fillCollor[obj.user_id] = color;
+            }
+            showMessage(obj);
         }
-        showMessage(obj);
     };
 
     $('#signout').click(function(){

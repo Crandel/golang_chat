@@ -36,7 +36,7 @@ func (m *Message) SaveMessage() (uint, error) {
 // GetMessages ...
 func GetMessages(m *[]Message) error {
 	dbase := db.DB
-	return dbase.Preload("User").Find(m).Error
+	return dbase.Preload("User").Order("id asc").Find(m).Error
 }
 
 // CreateUser ...

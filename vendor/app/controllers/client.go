@@ -41,6 +41,7 @@ type SendMessage struct {
 	ID       uint   `json:"id"`
 	UserID   uint   `json:"user_id"`
 	Username string `json:"username"`
+	IsDelete bool   `json:"is_delete"`
 }
 
 func (c *Client) read() {
@@ -63,7 +64,6 @@ func (c *Client) read() {
 		}
 		message.Message = string(bytes.TrimSpace(bytes.Replace([]byte(message.Message), newline, space, -1)))
 		hub.broadcast <- message
-
 	}
 }
 
