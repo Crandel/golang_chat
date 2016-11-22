@@ -117,13 +117,13 @@ $(document).ready(function(){
     sock.onmessage = function(event) {
         var obj = JSON.parse(event.data),
             message_div = $("#" + obj.id);
-        if (message_div){
+        if (message_div.length){
             if (obj.is_delete){
                 message_div.remove();
                 return
             }
             message_div.find('.message').html(obj.message);
-        }else{
+        } else {
             if (obj.user_id in fillCollor){
                 obj.colorname = fillCollor[obj.user_id];
             }else{

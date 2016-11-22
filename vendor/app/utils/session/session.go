@@ -7,8 +7,6 @@ import (
 	"github.com/gorilla/sessions"
 )
 
-const name string = "session"
-
 var (
 	// Store - store for session
 	Store *sessions.CookieStore
@@ -44,7 +42,10 @@ func GetUserID(s *sessions.Session) (uint, error) {
 
 // Instance returns a new session, never returns an error
 func Instance(r *http.Request) *sessions.Session {
-	session, _ := Store.Get(r, name)
+	// id := r.Header.Get("X-Request-ID")
+	// r.Header.Set("X-Request-ID", id)
+	// log.Println(r.Header, id)
+	session, _ := Store.Get(r, "session")
 	return session
 }
 
@@ -52,5 +53,13 @@ func Instance(r *http.Request) *sessions.Session {
 func Clear(s *sessions.Session) {
 	for k := range s.Values {
 		delete(s.Values, k)
+	}
+}
+
+// Expire - delete cookie
+func Expire(s *sessions.Session) {
+	Clear(s)
+	s.Options = &sessions.Options{
+		MaxAge: -1,
 	}
 }

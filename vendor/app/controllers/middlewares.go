@@ -16,24 +16,6 @@ func LogMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-// DisallowAnonMiddleware - middleware to disallow anonymous users
-func DisallowAnonMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Get session
-		user := r.Context().Value("user")
-		if user == nil {
-			url, err := RedirectFunc("login")
-			if err != nil {
-				http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
-				return
-			}
-			http.Redirect(w, r, url, http.StatusMovedPermanently)
-			return
-		}
-		next.ServeHTTP(w, r)
-	})
-}
-
 // UserInContext - save user from session in every request
 func UserInContext(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -50,6 +32,14 @@ func UserInContext(next http.Handler) http.Handler {
 				ctx := context.WithValue(r.Context(), "user", user)
 				r = r.WithContext(ctx)
 			}
+		} else {
+			url, err := RedirectFunc("login")
+			if err != nil {
+				http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+				return
+			}
+			http.Redirect(w, r, url, http.StatusMovedPermanently)
+			return
 		}
 		next.ServeHTTP(w, r)
 	})

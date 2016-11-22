@@ -132,7 +132,6 @@ func signHandleFunc(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, url, http.StatusMovedPermanently)
 		}
 	}
-	return
 }
 
 // SignHandler ...
@@ -141,7 +140,8 @@ var SignHandler = MakeHandler(signHandleFunc)
 // signOutHandleFunc - handle func for signout page
 func signOutHandleFunc(w http.ResponseWriter, r *http.Request) {
 	sess := s.Instance(r)
-	s.Clear(sess)
+	s.Expire(sess)
+	sess.Save(r, w)
 	url, err := RedirectFunc("login")
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)

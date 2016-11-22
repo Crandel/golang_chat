@@ -16,8 +16,8 @@ data/
 # vendor folders
 .vendor/*
 vendor/*
-!vendor/app/
 !vendor/vendor.json
+!vendor/app/*
 
 # config
 config.json

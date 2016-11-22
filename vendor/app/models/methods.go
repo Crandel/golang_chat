@@ -1,6 +1,10 @@
 package models
 
-import "app/utils/db"
+import (
+	"app/utils/db"
+	"log"
+	"time"
+)
 
 // Automigrate ...
 func Automigrate() {
@@ -26,6 +30,7 @@ func GetUserByID(id uint) (*User, error) {
 // SaveMessage - save single message
 func (m *Message) SaveMessage() (uint, error) {
 	dbase := db.DB
+	m.CreatedAt = time.Now()
 	err := dbase.Save(m).Error
 	if err != nil {
 		return 0, err
@@ -36,7 +41,11 @@ func (m *Message) SaveMessage() (uint, error) {
 // GetMessages ...
 func GetMessages(m *[]Message) error {
 	dbase := db.DB
-	return dbase.Preload("User").Order("id asc").Find(m).Error
+	now := time.Now()
+	year, month, day := now.Date()
+	today := time.Date(year, month, day, 0, 0, 0, 0, now.Location())
+	log.Println(today)
+	return dbase.Preload("User").Where("created_at >= ?", today).Order("id asc").Find(m).Error
 }
 
 // CreateUser ...

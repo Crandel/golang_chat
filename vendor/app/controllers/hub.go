@@ -58,9 +58,14 @@ func GetHub() *Hub {
 
 // changeMessage - sync message with database
 func changeMessage(sm *SendMessage) {
-	log.Println(sm, "changeMessage")
-	message := &m.Message{ID: sm.ID, UserID: uint(sm.UserID), Message: sm.Message}
-	if sm.IsDelete {
+	user, err := m.GetUserByID(sm.UserID)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	message := &m.Message{User: *user, Message: sm.Message}
+	if message.ID != 0 && sm.IsDelete {
+		log.Println("Delete")
 		message.DeleteMessage()
 		return
 	}
@@ -69,11 +74,6 @@ func changeMessage(sm *SendMessage) {
 		log.Println(err)
 		return
 	}
-	message.ID = messageID
-	user, err := m.GetUserByID(message.UserID)
-	if err != nil {
-		log.Println(err)
-		return
-	}
+	sm.ID = messageID
 	sm.Username = user.Login
 }
