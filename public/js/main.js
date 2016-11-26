@@ -102,7 +102,6 @@ $(document).ready(function(){
         var par = $(this).parent().parent()[0],
             id = par.id;
         sendMessage({user_id: getUserId(), id:+id, is_delete: true});
-        par.remove();
     });
 
     $('#saveButton').click(function(){

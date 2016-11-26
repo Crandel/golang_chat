@@ -63,7 +63,7 @@ func changeMessage(sm *SendMessage) {
 		log.Println(err)
 		return
 	}
-	message := &m.Message{User: *user, Message: sm.Message}
+	message := &m.Message{ID: sm.ID, User: *user, Message: sm.Message}
 	if message.ID != 0 && sm.IsDelete {
 		log.Println("Delete")
 		message.DeleteMessage()

@@ -60,7 +60,7 @@ func loginHandleFunc(w http.ResponseWriter, r *http.Request) {
 		login := template.Must(getTemlates("login"))
 		login.Execute(w, nil)
 	} else {
-		err := r.ParseForm()
+		r.ParseForm()
 		// logic part of log in
 		user := &m.User{
 			Login:    r.FormValue("login"),
@@ -87,7 +87,6 @@ func loginHandleFunc(w http.ResponseWriter, r *http.Request) {
 			} else {
 				http.Error(w, fmt.Sprintf("User %s not found", user.Login), http.StatusNotFound)
 			}
-			return
 		}
 	}
 }
