@@ -3,10 +3,10 @@
 	"ignore": "test",
 	"package": [
 		{
-			"checksumSHA1": "BdLdZP/C2uOO3lqk9X3NCKFpXa4=",
+			"checksumSHA1": "kChwmKazQLFun0USpBail+TyUYI=",
 			"path": "github.com/asaskevich/govalidator",
-			"revision": "7b3beb6df3c42abd3509abfc3bcacc0fbfb7c877",
-			"revisionTime": "2016-10-01T16:31:30Z"
+			"revision": "7d2e70ef918f16bd6455529af38304d6d025c952",
+			"revisionTime": "2018-03-19T08:16:51Z"
 		},
 		{
 			"checksumSHA1": "g/V4qrXjUGG9B+e3hB+4NAYJ5Gs=",
@@ -15,70 +15,70 @@
 			"revisionTime": "2016-08-17T18:46:32Z"
 		},
 		{
-			"checksumSHA1": "urMd7A9QPAJYY0GZJL9qBhlUmD8=",
+			"checksumSHA1": "YuYKzn2jczaM6DQcFDmukvAHUX4=",
 			"path": "github.com/gorilla/mux",
-			"revision": "757bef944d0f21880861c2dd9c871ca543023cba",
-			"revisionTime": "2016-09-20T23:08:13Z"
+			"revision": "94231ffd98496cbcb1c15b7bf2a9edfd5f852cd4",
+			"revisionTime": "2018-04-03T18:23:30Z"
 		},
 		{
-			"checksumSHA1": "veX5bpYOBjZZWMyWxXxys8EH9d8=",
+			"checksumSHA1": "ucTBCc7dDRKLGPsYfAzu/Gq63qA=",
 			"path": "github.com/gorilla/securecookie",
-			"revision": "fa5329f913702981df43dcb2a380bac429c810b5",
-			"revisionTime": "2016-10-03T05:16:01Z"
+			"revision": "e59506cc896acb7f7bf732d4fdf5e25f7ccd8983",
+			"revisionTime": "2017-02-24T19:38:04Z"
 		},
 		{
-			"checksumSHA1": "f1dfF3vmO95G/hbwMYlFru/FfMo=",
+			"checksumSHA1": "/jOLCzAcN8p1GakgUYaWOs4tjw8=",
 			"path": "github.com/gorilla/sessions",
-			"revision": "ca9ada44574153444b00d3fd9c8559e4cc95f896",
-			"revisionTime": "2016-09-22T14:58:04Z"
+			"revision": "a2f2a3de9a4a575047f73e3e36bc85ecc3546391",
+			"revisionTime": "2018-03-21T16:38:55Z"
 		},
 		{
-			"checksumSHA1": "SmBqqqR0T+1Ksx5zwCl295Vey0s=",
+			"checksumSHA1": "+1LsRRZKa06yTFg/Tu5NCsyHxOA=",
 			"path": "github.com/gorilla/websocket",
-			"revision": "9fbf129ff2a3cf2467f7d0021de2eb4d3aecc109",
-			"revisionTime": "2016-11-02T20:04:59Z"
+			"revision": "eb925808374e5ca90c83401a40d711dc08c0c0f6",
+			"revisionTime": "2018-03-06T18:15:48Z"
 		},
 		{
-			"checksumSHA1": "SOsDc39DfjrLbg8tESrvCjb8zGk=",
+			"checksumSHA1": "lYUMiQOLvV+Okxcm1RQnot+c0ho=",
 			"path": "github.com/jinzhu/gorm",
-			"revision": "c1b9cf186e4bcd8e5d566ef43f2ae2dfe22dc34e",
-			"revisionTime": "2016-10-23T14:58:23Z"
+			"revision": "52c5c8127cf4aeffde3e0aa9222640832075a90f",
+			"revisionTime": "2018-03-15T14:35:31Z"
 		},
 		{
-			"checksumSHA1": "QmQW8snORAputB7/1jFXpsOZa8A=",
+			"checksumSHA1": "Sf/CFFl00e8nN8DDKaT2dKLUaFI=",
 			"path": "github.com/jinzhu/gorm/dialects/postgres",
-			"revision": "ab703afe976d9e7672c2ea2635ef13fdd326583e",
-			"revisionTime": "2016-10-06T13:23:04Z"
+			"revision": "52c5c8127cf4aeffde3e0aa9222640832075a90f",
+			"revisionTime": "2018-03-15T14:35:31Z"
 		},
 		{
-			"checksumSHA1": "ZtoqVjpOE8VF9n6Ebqyu4vTUYas=",
+			"checksumSHA1": "4eelJOSLZoDzLuaJvgilOBVNovU=",
 			"path": "github.com/jinzhu/inflection",
-			"revision": "74387dc39a75e970e7a3ae6a3386b5bd2e5c5cff",
-			"revisionTime": "2016-08-17T01:46:01Z"
+			"revision": "04140366298a54a039076d798123ffa108fff46c",
+			"revisionTime": "2018-03-08T03:36:59Z"
 		},
 		{
 			"checksumSHA1": "OBvAHqWjdI4NQVAqTkcQAdTuCFY=",
 			"path": "github.com/justinas/alice",
-			"revision": "1051eaf52fcafdd87ead59d28b065f1fcb8274ec",
-			"revisionTime": "2016-09-10T10:38:22Z"
+			"revision": "03f45bd4b7dad4734bc4620e46a35789349abb20",
+			"revisionTime": "2017-10-23T06:44:55Z"
 		},
 		{
-			"checksumSHA1": "dNYxHiBLalTqluak2/Z8c3RsSEM=",
+			"checksumSHA1": "F7vsuKOVSMnFSi90odRxfhBEBeA=",
 			"path": "github.com/lib/pq",
-			"revision": "50761b0867bd1d9d069276790bcd4a3bccf2324a",
-			"revisionTime": "2016-08-31T22:25:20Z"
+			"revision": "d34b9ff171c21ad295489235aec8b6626023cd04",
+			"revisionTime": "2018-03-27T07:18:24Z"
 		},
 		{
-			"checksumSHA1": "jaCQF1par6Jl8g+V2Cgp0n/0wSc=",
+			"checksumSHA1": "EnMmNGgpDa5sNw0Zs5RhvNDcP2g=",
 			"path": "github.com/lib/pq/hstore",
-			"revision": "50761b0867bd1d9d069276790bcd4a3bccf2324a",
-			"revisionTime": "2016-08-31T22:25:20Z"
+			"revision": "d34b9ff171c21ad295489235aec8b6626023cd04",
+			"revisionTime": "2018-03-27T07:18:24Z"
 		},
 		{
-			"checksumSHA1": "xppHi82MLqVx1eyQmbhTesAEjx8=",
+			"checksumSHA1": "AU3fA8Sm33Vj9PBoRPSeYfxLRuE=",
 			"path": "github.com/lib/pq/oid",
-			"revision": "50761b0867bd1d9d069276790bcd4a3bccf2324a",
-			"revisionTime": "2016-08-31T22:25:20Z"
+			"revision": "d34b9ff171c21ad295489235aec8b6626023cd04",
+			"revisionTime": "2018-03-27T07:18:24Z"
 		}
 	],
 	"rootPath": "go_chat"

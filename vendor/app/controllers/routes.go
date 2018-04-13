@@ -39,13 +39,14 @@ func RouteInit() *mux.Router {
 	baseAlice := alice.New(baseMidList...)
 	authAlice := alice.New(authMidList...)
 	router.Handle("/", authAlice.Then(MainHandler)).Name("home")
-	router.Handle("/login", baseAlice.Then(LoginHandler)).Methods("GET", "POST").Name("login")
-	router.Handle("/sign", baseAlice.Then(SignHandler)).Methods("GET", "POST").Name("sign")
-	router.Handle("/signout", authAlice.Then(SignOutHandler)).Methods("GET").Name("signout")
 	router.Handle("/ws", authAlice.Then(WsHandler)).Name("chat")
 	router.PathPrefix("/static/").Handler(baseAlice.Then(http.StripPrefix("/static/", http.FileServer(http.Dir("./public")))))
 	router.NotFoundHandler = http.HandlerFunc(NotFoundHandleFunc)
 	router.PathPrefix("/debug/pprof").Handler(http.DefaultServeMux)
+	api := router.PathPrefix("/api").Subrouter()
+	api.Handle("/login", baseAlice.Then(LoginHandler)).Methods("GET", "POST").Name("login")
+	api.Handle("/signin", baseAlice.Then(SignHandler)).Methods("GET", "POST").Name("sign")
+	api.Handle("/signout", authAlice.Then(SignOutHandler)).Methods("GET").Name("signout")
 	return router
 }
 
