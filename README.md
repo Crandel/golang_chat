@@ -1,5 +1,8 @@
 # Websocket chat written on golang
 
+P.S. This project was written in 2017 and became outdated.
+New version could be found [here](https://github.com/Crandel/go_chat)
+
 In this project I try to understand, how to create web apps using golang.
 
 There are so many examples about creating simple chats, but unfortunately to little about creating complex web solutions with authentication and config management, etc.
